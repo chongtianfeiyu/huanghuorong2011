@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<utils:User xmlns:mx="http://www.adobe.com/2006/mxml" width="100%"
+	xmlns:utils="com.sina.microblog.ui.utils.*">
+	<mx:Script>
+		<![CDATA[
+			import com.sina.microblog.core.ClientEvent;
+			import com.sina.microblog.core.MainController;
+			import com.sina.microblog.core.utils.EmbedResource;
+			import com.sina.microblog.data.MicroBlogUser;
+			
+			private function follow():void
+			{
+				_controller.follow(userData);
+			}
+			private function cancelFans():void
+			{
+				_controller.cancelFans(userData);
+			}
+			private function sendDirectMsg():void
+			{
+				var e:ClientEvent = new ClientEvent(ClientEvent.START_SEND_MSG, true);
+				e.data = userData;
+				dispatchEvent(e);
+			}
+		]]>
+	</mx:Script>
+	<mx:VBox width="100%" verticalGap="1">
+		<mx:HBox width="100%">
+			<mx:Image width="50" height="50" source="{profileImageSource}"/>
+			<mx:VBox width="100%" verticalGap="1">
+				<mx:Label text="{userName}" fontSize="13"/>
+				<mx:HBox>
+					<mx:Label text="{location}"/>
+					<mx:Label text="{'粉丝'+String(followerNum)+'人'}"/>
+				</mx:HBox>
+				<mx:Text id="status" width="100%" text="{latestStatus}" color="#666666"/>
+			</mx:VBox>	
+		</mx:HBox>
+		<mx:HBox width=" 100%" horizontalGap="0">
+			<mx:Spacer width="100%"/>
+			<utils:LabelButton id="followBtn" 		text="关注"		click="follow()"/>
+			<utils:LabelButton id="cancelFansBtn" 	text="移除粉丝"	click="cancelFans()"/>
+			<utils:LabelButton id="sendDirectMsgBtn" text="发私信"	click="sendDirectMsg()"/>
+		</mx:HBox>
+	</mx:VBox>
+</utils:User>

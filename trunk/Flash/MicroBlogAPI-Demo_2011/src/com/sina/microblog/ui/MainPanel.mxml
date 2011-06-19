@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%"
+	xmlns:mainPanel="com.sina.microblog.ui.mainPanel.*" 
+	xmlns:utils="com.sina.microblog.ui.utils.*"
+	creationComplete="onCreationComplete()" xmlns:s="library://ns.adobe.com/flex/spark">
+	<mx:Script>
+		<![CDATA[
+			import com.sina.microblog.core.ClientEvent;
+			import com.sina.microblog.core.MainController;
+			import com.sina.microblog.data.MicroBlogStatus;
+			import com.sina.microblog.data.MicroBlogUser;
+			import com.sina.microblog.ui.mainPanel.DirectMsgPanel;
+			import com.sina.microblog.ui.mainPanel.RepostPanel;
+			import com.sina.microblog.ui.utils.Comment;
+			import com.sina.microblog.ui.utils.DirectMsg;
+			import com.sina.microblog.ui.utils.Follower;
+			import com.sina.microblog.ui.utils.Friend;
+			import com.sina.microblog.ui.utils.Status;
+			
+			import flash.events.MouseEvent;
+			
+			import mx.events.FlexEvent;
+			
+			private const FriendFactory:ClassFactory = new ClassFactory(Friend);
+			private const FollowerFactory:ClassFactory = new ClassFactory(Follower);		
+			private const StatusFactory:ClassFactory = new ClassFactory(Status);
+			private const CommentFactory:ClassFactory = new ClassFactory(Comment);
+			private const DirectMsgFactory:ClassFactory = new ClassFactory(DirectMsg);
+			
+			private var repostPanel:RepostPanel = new RepostPanel();
+			private var directMsgPanel:DirectMsgPanel = new DirectMsgPanel();
+			[Bindable]
+			private var _controller:MainController;
+			
+			override protected function initializationComplete():void
+			{
+				super.initializationComplete();
+				
+				addEventListener(ClientEvent.JUMPTO_HOME, 			jumpToHomePage);
+				addEventListener(ClientEvent.JUMPTO_FRIENDS, 		jumpToFriendsPage);
+				addEventListener(ClientEvent.JUMPTO_FANS, 			jumpToFansPage);
+				addEventListener(ClientEvent.JUMPTO_STATUS,			jumpToStatusPage);
+				addEventListener(ClientEvent.JUMPTO_RECEIVED_MSGS, 	jumpToReceiveMsgsPage);
+				addEventListener(ClientEvent.JUMPTO_SENT_MSGS, 		jumpToSentMsgsPage);
+				addEventListener(ClientEvent.JUMPTO_RECEIVED_COMMENTS, jumpToReceivedCommentsPage);
+				addEventListener(ClientEvent.JUMPTO_SENT_COMMENTS, 	jumpToSentCommentsPage);
+				addEventListener(ClientEvent.JUMPTO_FAVOURITES, 	jumpToFavoritesPage);
+				addEventListener(ClientEvent.JUMPTO_MENTIONS, 		jumpToMentionsPage);
+				
+				addEventListener(ClientEvent.START_REPOST_STATUS, 	onStartRepost);
+				addEventListener(ClientEvent.CANCEL_REPOST_STATUS,	onCancelRepost);
+				addEventListener(ClientEvent.START_SEND_MSG, 		onStartSendMsg);
+				addEventListener(ClientEvent.CANCEL_SEND_MSG, 		onCancelSendMsg);
+			}
+			
+			private function onCreationComplete():void
+			{
+				expendBtn.addEventListener(MouseEvent.CLICK, onExpendBtnClick);
+				jumpToHomePage(null);
+				
+				_controller.addEventListener(ClientEvent.UPDATE_STATUS_SUCCESS, 		function(e:ClientEvent):void{
+					if(publishArea.height > 0)
+					{
+						onExpendBtnClick(null);
+					}
+				});
+			}
+			
+			private function onExpendBtnClick(event:MouseEvent):void
+			{
+				if(publishArea.height == 0)
+				{
+					publishArea.unfold();
+					expendBtn.label = "收起发布区";
+				}
+				else
+				{
+					publishArea.fold();
+					publishArea.status.text = "";
+					publishArea.deleteImage();
+					expendBtn.label = "展开发布区";
+				}
+			}
+			
+			private function jumpToHomePage(event:ClientEvent):void
+			{
+				_controller.mainData.currentPos = "首页";
+				_controller.loadFriendsTimeline();
+				mainList.itemRenderer = StatusFactory;
+			}
+			private function jumpToFriendsPage(event:ClientEvent):void
+			{
+				_controller.mainData.currentPos = "关注列表";
+				mainList.itemRenderer = FriendFactory;
+			}
+			private function jumpToFansPage(event:ClientEvent):void
+			{
+				_controller.mainData.currentPos = "粉丝列表";
+				mainList.itemRenderer = FollowerFactory;
+			}
+			private function jumpToStatusPage(event:ClientEvent):void
+			{
+				_controller.mainData.currentPos = "微博列表";
+				mainList.itemRenderer = StatusFactory;
+			}
+			private function jumpToReceiveMsgsPage(event:ClientEvent):void
+			{
+				_controller.mainData.currentPos = "我收到的私信";
+				_controller.loadReceivedDirectMsg();
+				mainList.itemRenderer = DirectMsgFactory;
+			}
+			private function jumpToSentMsgsPage(event:ClientEvent):void
+			{
+				_controller.mainData.currentPos = "我发送的私信";
+				_controller.loadSentDirectMsg();
+				mainList.itemRenderer = DirectMsgFactory;
+			}
+			private function jumpToReceivedCommentsPage(event:ClientEvent):void
+			{
+				_controller.mainData.currentPos = "我收到的评论";
+				_controller.loadCommentsTimeline();
+				mainList.itemRenderer = CommentFactory;
+			}
+			private function jumpToSentCommentsPage(event:ClientEvent):void
+			{
+				_controller.mainData.currentPos = "我发出的评论";
+				_controller.loadMyComments();
+				mainList.itemRenderer = CommentFactory;
+			}
+			
+			private function jumpToFavoritesPage(event:ClientEvent):void
+			{
+				_controller.mainData.currentPos = "我的收藏";
+				_controller.loadfavorites();
+				mainList.itemRenderer = StatusFactory;
+			}
+			
+			private function jumpToMentionsPage(event:ClientEvent):void
+			{
+				_controller.mainData.currentPos = "@我的";
+				_controller.loadMentions();
+				mainList.itemRenderer = StatusFactory;
+			}
+			
+			private function onStartRepost(event:ClientEvent):void
+			{
+				repostPanel.statusData = event.data as MicroBlogStatus
+				popupContainer.addChild(repostPanel);
+				popupContainer.visible = true;
+			}
+			public function onCancelRepost(event:ClientEvent):void
+			{
+				popupContainer.removeChild(repostPanel);
+				popupContainer.visible = false;
+			}
+			
+			public function onStartSendMsg(event:ClientEvent):void
+			{
+				directMsgPanel.reciverData = event.data as MicroBlogUser
+				popupContainer.addChild(directMsgPanel);
+				popupContainer.visible = true;
+			}
+			
+			public function onCancelSendMsg(event:ClientEvent):void
+			{
+				popupContainer.removeChild(directMsgPanel);
+				popupContainer.visible = false;
+			}
+			
+			public function set controller(value:MainController):void
+			{
+				_controller = value;
+				
+				repostPanel.controller = _controller;
+				directMsgPanel.controller = _controller;
+			}
+			
+//			import com.sina.microblog.ui.mainPanel.DirectMsgPanel;
+//			import com.sina.microblog.ui.mainPanel.RepostPanel;
+//			import com.sina.microblog.ui.utils.Comment;
+//			import com.sina.microblog.ui.utils.DirectMsg;
+//			import com.sina.microblog.ui.utils.Status;
+//			import com.sina.microblog.ui.utils.User;
+		]]>
+	</mx:Script>
+	<mx:VBox id="container" width="100%" y="{navigator.y + navigator.height}" height="{this.height - container.y}" verticalGap="1">
+		<mainPanel:TitleBar controller="{_controller}"/>
+		<mainPanel:ProfileArea id="profileArea" controller="{_controller}" shownUser="{_controller.mainData.shownUser}"/>
+		<mx:HRule width="100%"/>
+		<utils:CustomList id="mainList" width="100%" height="100%" controller="{_controller}"/>
+		<mx:Spacer/>
+		<mx:HRule width="100%"/>
+		<s:VGroup width="100%" horizontalAlign="right">
+			<mx:Button id="expendBtn" label="展开发布区"/>
+			<mainPanel:PublishArea id="publishArea" controller="{_controller}"/>
+		</s:VGroup>
+	</mx:VBox>
+	<mainPanel:Navigator id="navigator" width="100%" controller="{_controller}"/>
+	<mx:Canvas id="popupContainer" width="100%" height="100%" visible="false"/>
+</mx:Canvas>

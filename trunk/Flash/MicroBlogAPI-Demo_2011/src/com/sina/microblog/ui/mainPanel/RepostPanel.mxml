@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%"
+	xmlns:utils="com.sina.microblog.ui.utils.*" backgroundColor="black" backgroundAlpha="0.5" fontFamily="simhei" fontSize="11">
+	<mx:Script>
+		<![CDATA[
+			import com.sina.microblog.core.ClientEvent;
+			import com.sina.microblog.core.MainController;
+			import com.sina.microblog.data.MicroBlogStatus;
+			
+			private var _statusData:MicroBlogStatus;
+			
+			[Bindable]
+			private var _controller:MainController
+			[Bindable]
+			private var _originalStatusUserName:String;
+			[Bindable]
+			private var _text:String
+			
+			private function repost():void
+			{
+				if ( content.text.length <= 140)
+				{
+					_controller.repostStatus(_statusData, content.text);
+					_controller.addEventListener(ClientEvent.REPOST_STATUS_SUCCESS, onRepostStatusSuccess);
+				}
+			}
+			
+			private function onRepostStatusSuccess(event:ClientEvent):void
+			{
+				cancel();
+			}
+			
+			private function cancel():void
+			{
+				content.text = "";
+				dispatchEvent(new ClientEvent(ClientEvent.CANCEL_REPOST_STATUS, true));
+			}
+			
+			public function set statusData(value:MicroBlogStatus):void
+			{
+				_statusData = value;
+				_originalStatusUserName = _statusData.user.screenName;
+				_text = _statusData.text;
+			}
+			public function set controller(value:MainController):void
+			{
+				_controller = value;
+			}
+		]]>
+	</mx:Script>
+	<mx:VBox width="100%" verticalAlign="middle" backgroundColor="#ffffff"
+		 verticalCenter="0" horizontalCenter="0" paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10">
+		<mx:HBox horizontalGap="0">
+			<mx:Label text="转发"/>
+			<mx:Label text="{_originalStatusUserName}"/>
+			<mx:Label text="的微博"/>
+		</mx:HBox>
+		<mx:Text width="100%" id="originalStatus" text="{_text}"/>
+		<mx:TextArea id="content" width="100%" height="115"/>
+		<mx:HBox width="100%">
+			<mx:Label text="{'还可以输入'+String(140-content.text.length)+'字'}"/>
+			<mx:Spacer width="100%"/>
+			<mx:Button label="转发" click="repost()"  enabled="{content.text.length>0}"/>
+			<mx:Button label="取消" click="cancel()"/>
+		</mx:HBox>
+	</mx:VBox>
+</mx:Canvas>

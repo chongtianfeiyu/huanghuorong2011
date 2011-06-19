@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" 
+		   dataChange="onDataChange()" fontFamily="simhei" fontSize="11" xmlns:utils="com.sina.microblog.ui.utils.*">
+	<mx:Script>
+		<![CDATA[
+			import com.sina.microblog.core.MainController;
+			import com.sina.microblog.core.utils.EmbedResource;
+			import com.sina.microblog.data.MicroBlogComment;
+			[Bindable]
+			private var _controller:MainController;
+			
+			[Bindable]
+			private var _sendFrom:String;
+			[Bindable]
+			private var _sendTo:String;
+			[Bindable]
+			protected var profileImageSource:String;
+			[Bindable]
+			private var _originalContent:String;
+			
+			[Bindable]
+			private var _replyContent:String
+			
+			private function onDataChange():void
+			{
+				if(!commentData)
+				{
+					return;
+				}
+				_sendFrom = commentData.user.screenName;
+				profileImageSource = commentData.user.profileImageUrl;
+				if(ifRelytoComment)
+				{
+					_sendTo = (commentData.replyComments[0] as MicroBlogComment).user.screenName;
+					_originalContent = (commentData.replyComments[0] as MicroBlogComment).text;
+				}
+				else
+				{
+					_sendTo = commentData.status.user.screenName;
+					_originalContent = commentData.status.text;
+				}
+				_replyContent = commentData.text;
+			}
+			
+			private function remove():void
+			{
+				_controller.removeComment(commentData);
+			}
+			
+			public function set controller(value:MainController):void
+			{
+				_controller = value;
+			}
+			
+			public function get commentData():MicroBlogComment
+			{
+				return data as MicroBlogComment;
+			}
+			
+			private function get ifRelytoComment():Boolean
+			{
+				if(commentData.replyComments)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+		]]>
+	</mx:Script>
+	<mx:HBox width="100%">
+		<mx:Image width="52" source="{profileImageSource}"/>
+		<mx:VBox width="100%">
+			<mx:HBox id="contentFirstLine" width="100%" horizontalGap="0">
+				<mx:Label id="sendFrom" text="{_sendFrom}"/>
+				<mx:Label text="回复"/>
+				<mx:Label id="sendTo" text="{_sendTo}"/>
+				<mx:Label text=":"/>
+				<mx:Label id="originalContent" width="{contentFirstLine.width - originalContent.x}" text="{_originalContent}"/>
+			</mx:HBox>
+			<mx:Text id="reply" width="100%" text="{_replyContent}"/>
+			<mx:HBox width="100%" horizontalGap="0">
+				<mx:Label id="time"/>
+				<mx:Spacer width="100%"/>
+				<utils:LabelButton text="删除" click="remove()"/>
+			</mx:HBox>
+		</mx:VBox>
+	</mx:HBox>
+</mx:Canvas>

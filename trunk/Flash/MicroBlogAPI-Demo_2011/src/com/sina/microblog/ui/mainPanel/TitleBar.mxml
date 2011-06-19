@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" horizontalGap="0"  fontFamily="simhei" fontSize="11">
+	<mx:Script>
+		<![CDATA[
+			import com.sina.microblog.core.MainController;
+			import com.sina.microblog.data.MicroBlogUser;
+			
+			import mx.binding.utils.BindingUtils;
+			[Bindable]
+			private var _controller:MainController
+			
+			public function set controller(value:MainController):void
+			{
+				_controller = value;
+				
+				BindingUtils.bindProperty(this, "user", _controller.mainData, "currentUser");
+			}
+			
+			public function set user(value:MicroBlogUser):void
+			{
+				userName.text = value.screenName;
+			}
+		]]>
+	</mx:Script>
+	<mx:Label text="欢迎"/>
+	<mx:Label id="userName"/>
+	<mx:Label text=" 您现在的位置:"/>
+	<mx:Label text="{_controller.mainData.currentPos}"/>
+</mx:HBox>

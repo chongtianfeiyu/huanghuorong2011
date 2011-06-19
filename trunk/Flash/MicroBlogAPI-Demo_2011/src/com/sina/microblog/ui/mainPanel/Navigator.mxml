@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%"
+	xmlns:utils="com.sina.microblog.ui.utils.*" 
+	horizontalScrollPolicy="off" backgroundColor="black" fontFamily="simhei" fontSize="11">
+	<mx:Script>
+		<![CDATA[
+			import com.sina.microblog.core.MainController;
+			import com.sina.microblog.core.ClientEvent;
+			import com.sina.microblog.data.MicroBlogUser;
+			
+			[Bindable]
+			private var _controller:MainController
+			
+			
+			private function navigateTo(value:String):void
+			{
+				dispatchEvent(new ClientEvent(value, true));
+			}
+			
+			public function set controller(value:MainController):void
+			{
+				_controller = value;
+			}
+		]]>
+	</mx:Script>
+	<mx:HBox width="100%" horizontalGap="0">
+		<utils:LabelButton		text="首页"			fontColor="white" 	click="navigateTo(ClientEvent.JUMPTO_HOME)"/>
+		<utils:CustomMenu>
+			<utils:LabelButton 	text="我的私信"		fontColor="white" 	/>
+			<utils:LabelButton 	text="收到的私信"	fontColor="white" 	click="navigateTo(ClientEvent.JUMPTO_RECEIVED_MSGS)"/>
+			<utils:LabelButton 	text="发出的私信"	fontColor="white" 	click="navigateTo(ClientEvent.JUMPTO_SENT_MSGS)"/>
+		</utils:CustomMenu>
+		<utils:CustomMenu>
+			<utils:LabelButton 	text="我的评论"		fontColor="white" 	/>
+			<utils:LabelButton 	text="收到的评论"	fontColor="white" 	click="navigateTo(ClientEvent.JUMPTO_RECEIVED_COMMENTS)"/>
+			<utils:LabelButton 	text="发出的评论"	fontColor="white" 	click="navigateTo(ClientEvent.JUMPTO_SENT_COMMENTS)"/>
+		</utils:CustomMenu>
+		<utils:LabelButton id="favouriteBtn" 		fontColor="white" 	text="收藏夹"	click="navigateTo(ClientEvent.JUMPTO_FAVOURITES)"/>
+		<utils:LabelButton id="mentionsBtn" 		fontColor="white" 	text="@我的"		click="navigateTo(ClientEvent.JUMPTO_MENTIONS)"/>
+		<mx:Spacer width="100%"/>
+		<utils:CustomMenu>
+			<utils:LabelButton text="系统"			fontColor="white"/>
+			<utils:LabelButton id="logoutBtn" 		fontColor="white" 	text="重新登录"	click="navigateTo(ClientEvent.JUMPTO_LOGIN)"/>
+			<utils:LabelButton id="updateBtn" 		fontColor="white" 	text="检查更新"	click="_controller.appUpdater.checkNow()"/>
+		</utils:CustomMenu>
+	</mx:HBox>
+</mx:Canvas>

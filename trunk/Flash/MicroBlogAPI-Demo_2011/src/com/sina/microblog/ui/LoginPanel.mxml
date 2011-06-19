@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:s="library://ns.adobe.com/flex/spark"
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
+		   xmlns:fx="http://ns.adobe.com/mxml/2009"
+		   width="100%" height="100%" 
+		   fontFamily="simhei" 
+		   fontSize="11"
+		   creationComplete="canvas1_creationCompleteHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import com.sina.microblog.core.ClientEvent;
+			import com.sina.microblog.core.MainController;
+			import com.sina.microblog.core.vo.LoginData;
+			import com.sina.microblog.ui.components.SimpleWebKitBrowserWindow;
+			
+			import mx.events.FlexEvent;
+			import mx.validators.Validator;
+			
+			[Bindable]
+			protected var _controller:MainController;
+			private function checkForm():void
+			{
+//				var errors:Array = Validator.validateAll(validators);
+//				if ( errors.length == 0 ){
+//					_controller.login(userName.text, password.text);
+//					wait();
+//				}
+				//_controller.login(userName.text, password.text);
+				wait();
+			}
+			
+			public function set controller(value:MainController):void
+			{
+				_controller = value;
+			}
+			
+			public function reset():void
+			{
+				pinInput.visible = false;
+				pinInput.text = "";
+				loginBtn.label='请求认证'
+			}
+			
+			public function wait():void
+			{
+				//waiting.visible = true;
+			}
+
+			protected function loginBtn_clickHandler(event:MouseEvent):void
+			{
+				pinInput.visible = true;
+				if(loginBtn.label=='请求认证'){
+					loginBtn.label = "登录";
+					onRequest(null);
+				}else{
+					onAuthorized(null);
+				}
+			}
+			private function onRequest(e:MouseEvent):void
+			{
+				//TO-DO: Step1
+				//调用MicroBlogAPI的login
+				_controller.microBlogAPI.login(null,null,true);
+				
+			}
+			
+			private function onAuthorized(e:MouseEvent):void
+			{
+				//TO-DO: Step1
+				//设置pin 为pinInput.text;
+				_controller.microBlogAPI.pin = pinInput.text;
+			}
+
+			protected function canvas1_creationCompleteHandler(event:FlexEvent):void
+			{
+				_controller.addEventListener(ClientEvent.OPEN_CUSTOME_BROWSER, function(e:ClientEvent):void{
+					var browserWindow:SimpleWebKitBrowserWindow = new SimpleWebKitBrowserWindow();
+					browserWindow.url = e.data as String;
+					browserWindow.open();
+				});
+			}
+
+		]]>
+	</fx:Script>
+	<s:BorderContainer styleName="iWin"
+					   width="100%"
+					   height="100%">
+		<s:VGroup width="100%"
+				  height="100%"
+				  horizontalAlign="center"
+				  verticalAlign="middle"
+				  paddingTop="10"
+				  gap="15">
+			<s:Group>
+				<s:layout>
+					<s:HorizontalLayout gap="5"/>
+				</s:layout>
+				<s:Label text="Pin: " visible="{pinInput.visible}"/>
+				<mx:TextInput id="pinInput" visible="false"
+							  styleName="loginInput"
+							  width="180"
+							  height="22"
+							  displayAsPassword="false"/>
+			</s:Group>
+			<s:Button id="loginBtn"
+					  label="请求认证"
+					  toolTip="点击登录"
+					  width="100"
+					  height="26"
+					  click="loginBtn_clickHandler(event)"/>
+		</s:VGroup>
+	</s:BorderContainer>
+</mx:Canvas>

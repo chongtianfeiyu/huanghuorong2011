@@ -1,0 +1,115 @@
+/* CSS file */
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+@namespace ns "library://ns.adobe.com/flex/mx";
+@namespace ui "com.sina.microblog.ui.*";
+@namespace utils "com.sina.microblog.ui.utils.*";
+
+mx|WindowedApplication {
+	backgroundAlpha:0;
+	fontSize:12;
+	font-family:宋体;
+	color:#000000;
+}
+
+s|Button {
+	color:#333333;
+}
+
+
+ns|Alert {
+	backgroundColor:#000000;
+	cornerRadius:5;
+	color:#FFFFFF;
+	fontSize:12;
+	areaFill:#000000;
+	borderColor:#000000;
+	borderStyle:solid;
+	fillColors:#000000;
+	horizontalAlign:left;
+	titleStyleName:"alertTitle";
+	buttonStyleName:"alertBtn";
+}
+
+ns|ToolTip {
+	fontSize:12;
+}
+
+.alertTitle {
+	fontSize:12;
+	color:#000000;
+}
+
+.alertBtn {
+	fontSize:12px;
+	color:#000000;
+	themeColor:#FFFFFF;
+}
+
+.win {
+	cornerRadius:3;
+	backgroundColor:#333333;
+	borderColor:#000000;
+	borderStyle:solid;
+	horizontalCenter:0;
+	verticalCenter:0;
+}
+
+.iWin {
+	cornerRadius:3;
+	backgroundColor:#000000;
+	backgroundAlpha:0.8;
+	borderColor:#999999;
+	borderStyle:solid;}
+
+.loginInput {
+	fontSize:14;
+	color:#333333;
+}
+
+#loginBtn {
+	color:#333333;
+}
+
+#mainList {
+	borderStyle:none;
+	contentBackgroundColor:#333333;
+	rollOverColor:#111111;
+	selectionColor:#000000;
+	paddingBottom:5;
+	paddingLeft:5;
+	paddingRight:5;
+	paddingTop:5;
+}
+
+#mainList s|Scroller {
+	horizontal-scroll-policy: off;
+}
+
+#publishArea {
+	
+}
+
+#publishInput {
+	color:#222222;
+}
+
+.previewImage {
+	
+}
+
+ui|LoginPanel {
+	fontSize:12;
+	font-family:宋体;
+}
+ui|MainPanel {
+	fontSize:12;
+	font-family:宋体;
+}
+utils|Status {
+	fontSize:12;
+	font-family:宋体;
+}
+#relayStatus {
+	color:#999999;
+}
