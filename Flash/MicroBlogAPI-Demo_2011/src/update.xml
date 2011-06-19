@@ -1,0 +1,9 @@
+<!-- update.xml --> 
+     <update xmlns="http://ns.adobe.com/air/framework/update/description/1.0"> 
+       <version>v1.0beta20110619</version> 
+       <url>http://hambao.net/air/microblog/MicroBlogClient.air</url> 
+       <description> 
+           <text xml:lang="en_US">Creative AIR MicroBlog Sina</text> 
+           <text xml:lang="zh_CN">创意AIR微博，新浪客户端</text> 
+       </description> 
+    </update>

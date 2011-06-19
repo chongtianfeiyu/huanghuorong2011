@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:WindowedApplication 
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	layout="absolute"
+	xmlns:ui="com.sina.microblog.ui.*" 
+	statusBarFactory="com.sina.microblog.ui.StatusBar"
+	creationComplete="windowedapplication1_creationCompleteHandler(event)"
+	title="创意AIR微博"
+	titleIcon="{titleIco}"
+	width="300"
+	height="600">
+	<fx:Script>
+		<![CDATA[
+			import air.update.ApplicationUpdaterUI;
+			import air.update.events.DownloadErrorEvent;
+			import air.update.events.UpdateEvent;
+			
+			import com.sina.microblog.core.ClientEvent;
+			import com.sina.microblog.core.MainController;
+			import com.sina.microblog.core.StatusBarMediator;
+			
+			import flash.events.ErrorEvent;
+			import flash.events.ProgressEvent;
+			
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			
+			[Bindable]
+			private var _version:String;
+			[Bindable]
+			[Embed(source="images/32/jy.png")]  
+			private var titleIco:Class;  
+			[Embed(source="images/16/jy.png")]  
+			private var dockImageClass:Class; 
+			private var dockImage:Bitmap = new dockImageClass();  
+			[Bindable]
+			private var controller:MainController = new MainController();
+			private var statusBarMediator:StatusBarMediator = new StatusBarMediator();
+			
+			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
+			
+			override protected function initializationComplete():void
+			{
+				super.initializationComplete();
+				controller.microBlogAPI.source = "2672661507";
+				controller.microBlogAPI.consumerKey = "2672661507";
+				controller.microBlogAPI.consumerSecret = "06a87478df02527aa6ddc94a0da843d9";
+				controller.microBlogAPI.useCustomeBrowser = true;
+				controller.addEventListener(ClientEvent.LOGIN_SUCCESS, onLoginSuccess);
+				controller.addEventListener(ClientEvent.LOGIN_FAILED, onJumpToLogin);
+				addEventListener(ClientEvent.JUMPTO_LOGIN, onJumpToLogin);
+				statusBarMediator.client = this;
+				statusBarMediator.controller = controller;
+				statusBarMediator.init();
+				//NativeApplication.nativeApplication.startAtLogin = true;
+
+			}
+			
+			private function onJumpToLogin(event:ClientEvent):void
+			{
+				viewStack.selectedIndex = 0;
+				loginPanel.reset();
+			}
+			
+			private function onLoginSuccess(event:ClientEvent):void
+			{
+				viewStack.selectedIndex = 1;
+			}
+
+			protected function windowedapplication1_creationCompleteHandler(event:FlexEvent):void
+			{
+//				var sWidtht:uint = Screen.mainScreen.visibleBounds.width;
+//				var sHeight:uint = Screen.mainScreen.visibleBounds.height;
+				move(50, 50);
+				trayDock();
+			}
+				
+			private function trayDock():void
+			{
+//			   if(NativeApplication.supportsDockIcon || NativeApplication.supportsSystemTrayIcon){
+				NativeApplication.nativeApplication.icon.bitmaps = [dockImage];
+				var trayIcon:SystemTrayIcon = NativeApplication.nativeApplication.icon as SystemTrayIcon;
+				trayIcon.tooltip = "创意AIR微博";
+//				trayIcon.menu = createSystrayRootMenu();
+//				trayIcon.addEventListener(ScreenMouseEvent.CLICK, trayUndock);
+//				WindowManager.eachWindow(closeWindow);
+//				ReaderModelLocator.instance.airReader.nativeWindow.minimize();
+//				ReaderModelLocator.instance.airReader.nativeWindow.visible = false;
+//				sendNotification(ApplicationFacade.SYS_DOCKED);
+			}
+			public function createSystrayRootMenu():NativeMenu
+			{   
+//				var menu:NativeMenu = new NativeMenu();   
+//				var openNativeMenuItem:NativeMenuItem = new NativeMenuItem(ReaderResource.instance.resource.appUnDuck);
+//				var exitNativeMenuItem:NativeMenuItem = new NativeMenuItem(ReaderResource.instance.resource.appQuit);
+//				openNativeMenuItem.addEventListener(Event.SELECT, trayUndock);   
+//				exitNativeMenuItem.addEventListener(Event.SELECT, closeApp);
+//				menu.addItem(openNativeMenuItem);
+//				menu.addItem(exitNativeMenuItem);
+//				return menu;   
+				return null;
+			} 
+		]]>
+	</fx:Script>
+	<mx:ViewStack id="viewStack" width="100%" height="100%">
+		<ui:LoginPanel id="loginPanel" controller="{controller}"/>
+		<ui:MainPanel id="mainPanel" controller="{controller}"/>
+	</mx:ViewStack>
+</mx:WindowedApplication>

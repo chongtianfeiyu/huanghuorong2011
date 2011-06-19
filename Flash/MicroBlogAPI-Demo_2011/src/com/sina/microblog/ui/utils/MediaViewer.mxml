@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%"
+	xmlns:utils="com.sina.microblog.ui.utils.*" creationComplete="reset()">
+	<mx:Script>
+	<![CDATA[
+		import flash.events.Event;
+		import com.sina.microblog.data.MicroBlogStatus;
+		
+		private var _statusData:MicroBlogStatus;
+		private var _ifFold:Boolean = true;
+		
+		[Bindable]
+		private var picUrl:String;
+		
+		public function reset():void
+		{
+			//fold();
+		}
+		/*
+		private function fold():void
+		{
+			_ifFold = true;
+			buttonBar.height = 0;
+			imageContainer.height = 120;
+			updatePicUrl();
+		}
+		
+		private function unfold():void
+		{
+			_ifFold = false;
+			buttonBar.height = undefined;
+			imageContainer.height = 240;
+			updatePicUrl();
+		}
+		
+		private function switchFold():void
+		{
+			if(_ifFold)
+			{
+				unfold();
+			}
+			else
+			{
+				fold();
+			}
+		}
+		*/
+		private function updatePicUrl():void
+		{
+			if(_statusData)
+			{
+				picUrl = _ifFold ? _statusData.thumbPicUrl+".jpg" : _statusData.bmiddlePicUrl+".jpg";
+			}
+			else
+			{
+				picUrl = "";
+			}
+		}
+		
+		private function watchOriginal():void
+		{
+			flash.net.navigateToURL(new URLRequest(_statusData.originalPicUrl));
+		}
+		
+		public function set statusData(value:MicroBlogStatus):void
+		{
+			_statusData = value;
+			updatePicUrl();
+		}
+
+		private function imageContainer_onComplete(event:Event):void
+		{
+			
+		}
+
+	]]>
+	</mx:Script>
+	<mx:VBox width="100%" verticalGap="0" paddingLeft="2" paddingRight="2" paddingTop="2" paddingBottom="2">
+<!--		
+		<mx:HBox id="buttonBar" width="100%">
+			<utils:LabelButton text="收起" click="switchFold()"/>
+			<utils:LabelButton text="查看原图" click="watchOriginal()"/>
+		</mx:HBox>
+		-->
+		<mx:Image id="imageContainer" width="100%" height="120" source="{picUrl}" 
+			click="watchOriginal()" toolTip="点击查看原图"
+			complete="imageContainer_onComplete(event)"/>
+	</mx:VBox>
+</mx:Canvas>

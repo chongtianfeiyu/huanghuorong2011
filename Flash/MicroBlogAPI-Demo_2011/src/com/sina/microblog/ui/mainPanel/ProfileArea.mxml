@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%"
+	xmlns:utils="com.sina.microblog.ui.utils.*"
+	horizontalScrollPolicy="off"
+	fontFamily="simhei" fontSize="11">
+	<mx:Script>
+		<![CDATA[
+			import com.sina.microblog.core.ClientEvent;
+			import com.sina.microblog.core.MainController;
+			import com.sina.microblog.data.MicroBlogUser;
+			
+			[Bindable]
+			private var _controller:MainController;
+			[Bindable]
+			private var _userData:MicroBlogUser;
+			[Bindable]
+			private var screenName:String;
+			[Bindable]
+			private var location:String;
+			[Bindable]
+			private var profileImageSource:String;
+			[Bindable]
+			private var friendsNum:int;
+			[Bindable]
+			private var fansNum:int;
+			[Bindable]
+			private var statussNum:int;
+			
+			private function update():void
+			{
+				if(_userData)
+				{
+					screenName = _userData.screenName;
+					location = _userData.location;
+					profileImageSource = _userData.profileImageUrl;
+					friendsNum = _userData.friendsCount;
+					fansNum = _userData.followersCount;
+					statussNum = _userData.statusesCount;
+				}
+				else
+				{
+					screenName = "";
+					location = "";
+					profileImageSource = "";
+					friendsNum = 0;
+					fansNum = 0;
+					statussNum = 0;
+				}
+			}
+			
+			private function jumpToFriends():void
+			{
+				if(!_userData)
+				{
+					return;
+				}
+				_controller.loadUserFriends(_userData);
+				dispatchEvent(new ClientEvent(ClientEvent.JUMPTO_FRIENDS, true));
+			}
+			private function jumpToFollowers():void
+			{
+				if(!_userData)
+				{
+					return;
+				}
+				_controller.loadUserFollowers(_userData);
+				dispatchEvent(new ClientEvent(ClientEvent.JUMPTO_FANS, true));
+			}
+			private function jumpToStatus():void
+			{
+				if(!_userData)
+				{
+					return;
+				}
+				_controller.loadUserStatus(_userData);
+				dispatchEvent(new ClientEvent(ClientEvent.JUMPTO_STATUS, true));
+			}
+			
+			public function set controller(value:MainController):void
+			{
+				_controller = value;
+			}
+			public function set shownUser(value:MicroBlogUser):void
+			{
+				_userData = value
+				update();
+			}
+		]]>
+	</mx:Script>
+	<mx:HBox width="100%">
+		<mx:Image width="50" height="50" source="{profileImageSource}" toolTip="点击上传头像"/>
+		<mx:VBox width="100%" verticalGap="1">
+			<mx:HBox width="100%">
+				<mx:Label text="{screenName}" fontSize="13"/>
+				<mx:Label text="{location}"/>
+			</mx:HBox>
+			<mx:HBox width="100%" horizontalGap="1">
+				<utils:LabelButton text="{'关注(' + String(friendsNum) + ')'}" 	click="jumpToFriends()"/>
+				<utils:LabelButton text="{'粉丝(' + String(fansNum) + ')'}"		click="jumpToFollowers()"/>
+				<utils:LabelButton text="{'微博(' + String(statussNum) + ')'}"	click="jumpToStatus()"/>
+				<mx:Spacer width="100%"/>
+			</mx:HBox>
+		</mx:VBox>
+	</mx:HBox>
+</mx:Canvas>

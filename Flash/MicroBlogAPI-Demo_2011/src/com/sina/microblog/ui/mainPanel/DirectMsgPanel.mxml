@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%"
+	xmlns:utils="com.sina.microblog.ui.utils.*" backgroundColor="black" backgroundAlpha="0.5"  fontFamily="simhei" fontSize="11">
+	<mx:Script>
+		<![CDATA[
+			import com.sina.microblog.core.ClientEvent;
+			import com.sina.microblog.core.MainController;
+			import com.sina.microblog.data.MicroBlogUser;
+			
+			private var _reciverData:MicroBlogUser
+			
+			[Bindable]
+			private var _controller:MainController
+			
+			[Bindable]
+			private var _sendTo:String
+			
+			private function send():void
+			{
+				if ( content.text.length <= 300)
+				{
+					_controller.sendDirectMsg(_reciverData, content.text);
+					_controller.addEventListener(ClientEvent.SEND_MSG_SUCCESS, onSendMsgSuccess);
+				}
+			}
+			
+			private function onSendMsgSuccess(event:ClientEvent):void
+			{
+				cancel();
+			}
+			
+			private function cancel():void
+			{
+				content.text = "";
+				dispatchEvent(new ClientEvent(ClientEvent.CANCEL_SEND_MSG, true));
+			}
+			
+			public function set reciverData(value:MicroBlogUser):void
+			{
+				_reciverData = value;
+				_sendTo = value.screenName;
+			}
+			public function set controller(value:MainController):void
+			{
+				_controller = value;
+			}
+		]]>
+	</mx:Script>
+	<mx:VBox width="100%" verticalAlign="middle" backgroundColor="#ffffff"
+		 verticalCenter="0" horizontalCenter="0" paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10">
+		<mx:HBox width="100%" horizontalGap="0">
+			<mx:Label text="发私信给"/>
+			<mx:Label id="sendToLabel" text="{_sendTo}"/>
+		</mx:HBox>
+		<mx:TextArea id="content" width="100%" height="215" maxChars="300"/>
+		<mx:HBox width="100%">
+			<mx:Label text="{'还可以输入'+String(300-content.text.length) + '字'}"/>
+			<mx:Spacer width="100%"/>
+			<mx:Button label="发送" enabled="{content.text.length>0}" click="send()"/>
+			<mx:Button label="取消" click="cancel()"/>
+		</mx:HBox>
+	</mx:VBox>
+</mx:Canvas>
