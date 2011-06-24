@@ -7,10 +7,11 @@
 	xmlns:ui="com.sina.microblog.ui.*" 
 	statusBarFactory="com.sina.microblog.ui.StatusBar"
 	creationComplete="windowedapplication1_creationCompleteHandler(event)"
-	title="创意AIR微博"
+	title="创意AIR微博-v1.0修正版 by Winters"
 	titleIcon="{titleIco}"
-	width="300"
-	height="600">
+	width="400"
+	height="700">
+	<fx:Style source="style.css"/>
 	<fx:Script>
 		<![CDATA[
 			import air.update.ApplicationUpdaterUI;
@@ -44,9 +45,11 @@
 			override protected function initializationComplete():void
 			{
 				super.initializationComplete();
+				controller.microBlogAPI.isTrustDomain = true;
 				controller.microBlogAPI.source = "2672661507";
 				controller.microBlogAPI.consumerKey = "2672661507";
 				controller.microBlogAPI.consumerSecret = "06a87478df02527aa6ddc94a0da843d9";
+				
 				controller.microBlogAPI.useCustomeBrowser = true;
 				controller.addEventListener(ClientEvent.LOGIN_SUCCESS, onLoginSuccess);
 				controller.addEventListener(ClientEvent.LOGIN_FAILED, onJumpToLogin);
@@ -73,7 +76,7 @@
 			{
 //				var sWidtht:uint = Screen.mainScreen.visibleBounds.width;
 //				var sHeight:uint = Screen.mainScreen.visibleBounds.height;
-				move(50, 50);
+				move(50, 10);
 				trayDock();
 			}
 				
