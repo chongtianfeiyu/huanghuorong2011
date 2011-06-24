@@ -2900,6 +2900,36 @@ package com.sina.microblog
 		private function executeRequest(name:String, req:URLRequest):void
 		{
 			var urlLoader:URLLoader = serviceLoader[name] as URLLoader;
+//			trace("req	flash.net.URLRequest (@4c68ec1)	")
+//			trace("name="+name);
+////			trace("authenticate="+req.authenticate);
+////			trace("cacheResponse     = "+	req.cacheResponse);
+//			trace("contentType       = "+ req.contentType  );	
+//			trace("data	flash.net.URLVariables");	
+//			trace("req.data._anywhereToken	    = "+ req.data._anywhereToken	            );
+//			trace("req.data._cache_time	      = "+req.data._cache_time	                );
+//			trace("req.data._method	          = "+req.data._method	                    );
+//			trace("req.data.oauth_callback	    = "+req.data.oauth_callback              );
+//			trace("req.data.oauth_consumer_key	= "+req.data.oauth_consumer_key	        );
+//			trace("req.data.oauth_nonce	      = "+ req.data.oauth_nonce	              );
+//			trace("req.data.oauth_signature	  = "+	req.data.oauth_signature           );
+//			trace("req.data.oauth_signature_method	= "+	req.data.oauth_signature_method);
+//			trace("req.data.oauth_timestamp	= "+	req.data.oauth_timestamp             );
+//			trace("req.data.oauth_token	    = "+	req.data.oauth_token                 );
+//			trace("req.data.oauth_version	  = "+ req.data.oauth_version                );
+//			trace("req.data.source	= "+ req.data.source                                 );
+//			trace("req.data._uri	  = "+ req.data._uri                                   );
+//			trace("digest	= "+	req.digest                                );
+////			trace("followRedirects	= "+	req.followRedirects             );
+////			trace("idleTimeout	    = "+	req.idleTimeout                 );
+////			trace("manageCookies	  = "+	req.manageCookies               );
+//			trace("req.method	= "+	req.method                                );
+//			trace("req.requestHeaders	Array (@885b921)"	                  );
+//			trace("req.requestHeaders.length	="+req.requestHeaders.length                    );
+//			trace("req.url	      = "+ req.url                                );
+//			trace("-----------------------------------------------------------------------------------------" );
+//			trace("useCache	  = "+	req.useCache                          );
+//			trace("userAgent	= "+	req.userAgent                         );
 			urlLoader.load(req);
 		}
 
@@ -2957,8 +2987,10 @@ package com.sina.microblog
 			params["_anywhereToken"] = _anywhereToken;
 			if ( accessTokenKey.length > 0)
 			{
+				trace("accessTokenKey.length > 0 ....signRequest.......................");
 				req=signRequest(requestMethod, url, params, false);
 			}else{
+				trace("accessTokenKey.length < 0.......................");
 				if (requestMethod == URLRequestMethod.GET)
 				{
 					url+=makeGETParamString(params);
@@ -3258,7 +3290,7 @@ package com.sina.microblog
 			}
 			var sig:String=Base64.encode(HMAC.hash(secrectStr, msgStr, SHA1));
 			// The matchers are specified in OAuth only.
-			sig = sig.replace(/\+/g, "%2B");
+			//sig = sig.replace(/\+/g, "%2B");
 			oauthParams["oauth_signature"] = sig;
 			
 			if (method == URLRequestMethod.GET)
@@ -3396,6 +3428,7 @@ package com.sina.microblog
 			//var urlData:URLVariables = new URLVariables(oauthLoader.data);
 			var e:MicroBlogErrorEvent = new MicroBlogErrorEvent(MicroBlogErrorEvent.OAUTH_CERTIFICATE_ERROR);
 			e.message = oauthLoader.data;
+			trace("oauthLoader_onError:"+e.message+"\n"+event.text);
 			dispatchEvent(e);
 		}
 
