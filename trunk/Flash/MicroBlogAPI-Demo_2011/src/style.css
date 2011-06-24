@@ -9,7 +9,8 @@ mx|WindowedApplication {
 	backgroundAlpha:0;
 	fontSize:12;
 	font-family:宋体;
-	color:#000000;
+	color:#ffffff;
+	backgroundColor:#333333;
 }
 
 s|Button {
@@ -33,10 +34,12 @@ ns|Alert {
 
 ns|ToolTip {
 	fontSize:12;
+	font-family:宋体;
 }
 
 .alertTitle {
 	fontSize:12;
+	font-family:宋体;
 	color:#000000;
 }
 

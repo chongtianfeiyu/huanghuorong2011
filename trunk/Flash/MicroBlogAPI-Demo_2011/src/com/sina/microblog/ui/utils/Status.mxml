@@ -60,6 +60,7 @@
 			private var thumbPicUrl:String;
 			[Bindable]
 			private var from:String;
+			private var originalPicUrl:String;
 			
 			private function onDataChange():void
 			{
@@ -90,7 +91,7 @@
 				if (hasPic)
 				{
 					thumbPicUrl=data.thumbPicUrl;
-					
+					originalPicUrl = data.originalPicUrl;
 				}
 				from = data.source;
 				/**
@@ -109,6 +110,7 @@
 						relayThumbPicUrl=data.repost.thumbPicUrl;
 						hasPic = true;
 						thumbPicUrl = relayThumbPicUrl;
+						originalPicUrl = data.repost.originalPicUrl;
 					}
 //					isFavoriteRelay=data.repost.isFavorited;
 				}
@@ -175,6 +177,7 @@
 
 			protected function thumbPic_clickHandler(event:MouseEvent):void
 			{
+				navigateToURL(new URLRequest(originalPicUrl), "_blank");
 //				var _loc_5:Point;
 //				var _loc_2:String;
 //				if (event.currentTarget == this.thumbPic)
@@ -212,14 +215,16 @@
 		<mx:Image width="50" source="{profileImageSource}"/>
 			<mx:VBox width="100%" verticalGap="0">
 				<mx:Label width="100%" text="{userName}" fontSize="12" fontFamily="宋体"/>
-				<mx:Text id="status" width="100%" htmlText="{text}" fontSize="12" fontFamily="宋体"/>
+				<mx:Text id="status" width="100%" htmlText="{text}" 
+						 fontSize="12" fontFamily="宋体"/>
 				<!--utils:MediaViewer id="mediaViewer" height="{ifMedia ? undefined : 0}" statusData="{ifMedia ? statusData : null}"/-->
 				<!-- 转发内容 -->
-				<mx:HBox width="100%" visible="{hasRelay}" backgroundColor="#FFEC8B">
+				<mx:HBox width="100%" visible="{hasRelay}" backgroundColor="#000000" cornerRadius="5">
 					<!--mx:Image width="50" source="{profileImageSource}"/-->
 					<mx:VBox width="100%" verticalGap="0" paddingLeft="10">
 						<mx:Label width="100%" text="{relayUserScreenName}" fontSize="12" fontFamily="宋体"/>
-						<mx:Text width="100%" htmlText="{relayStatusText}" fontSize="12" fontFamily="宋体"/>
+						<mx:Text width="100%" htmlText="{relayStatusText}" 
+								 fontSize="12" fontFamily="宋体"/>
 					</mx:VBox>
 				</mx:HBox>
 				<mx:Image id="thumbPic"
@@ -228,7 +233,8 @@
 						  includeInLayout="{hasPic}"
 						  width="{hasPic?thumbPic.contentWidth:0}"
 						  height="{hasPic?thumbPic.contentWidth:0}"
-						  click="thumbPic_clickHandler(event)"/>
+						  click="thumbPic_clickHandler(event)"
+						  buttonMode="true"/>
 				<mx:HBox width=" 100%" horizontalGap="0">
 					<mx:Label text="{time}" fontSize="12" fontFamily="宋体"/>
 					<utils:LabelButton htmlText="{'来自'+from}" click="linkToSource()" fontSize="12" fontFamily="宋体"/>

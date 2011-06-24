@@ -25,10 +25,10 @@ package com.sina.microblog.core
 		public function init():void
 		{
 			addEvent(ClientEvent.LOGIN_SUCCESS, 		"登陆成功");
-			addEvent(ClientEvent.LOGIN_FAILED,			"登陆失败");
+			addEvent(ClientEvent.LOGIN_FAILED,			"登陆失败，请重试");
 			
 			addEvent(ClientEvent.UPDATE_STATUS_SUCCESS,	"微博发送成功");
-			addEvent(ClientEvent.UPDATE_STATUS_FAILED,	"微博发送失败");
+			addEvent(ClientEvent.UPDATE_STATUS_FAILED,	"微博发送失败，请重试");
 			addEvent(ClientEvent.REPOST_STATUS_SUCCESS,	"转发成功");
 			addEvent(ClientEvent.REPOST_STATUS_FAILED,	"转发失败");
 			addEvent(ClientEvent.COMMENT_STATUS_SUCCESS,"评论成功");
@@ -61,7 +61,7 @@ package com.sina.microblog.core
 				_client.status = "获取微博成功";
 			});
 			_controller.microBlogAPI.addEventListener(MicroBlogErrorEvent.LOAD_FRIENDS_TIMELINE_ERROR, 	function(e:MicroBlogErrorEvent):void{
-				_client.status = "获取微博失败";
+				_client.status = "获取微博失败，请再次点击首页";
 			});
 			_controller.microBlogAPI.addEventListener(MicroBlogEvent.LOAD_FAVORITE_LIST_RESULT, 	function(e:MicroBlogEvent):void{
 				_client.status = "获取收藏成功";

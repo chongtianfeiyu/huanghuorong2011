@@ -191,7 +191,7 @@
 		<mx:Spacer/>
 		<mx:HRule width="100%"/>
 		<s:VGroup width="100%" horizontalAlign="right">
-			<mx:Button id="expendBtn" label="展开发布区"/>
+			<mx:Button id="expendBtn" label="展开发布区" color="#000000"/>
 			<mainPanel:PublishArea id="publishArea" controller="{_controller}"/>
 		</s:VGroup>
 	</mx:VBox>
