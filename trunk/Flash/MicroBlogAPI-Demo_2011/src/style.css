@@ -9,8 +9,7 @@ mx|WindowedApplication {
 	backgroundAlpha:0;
 	fontSize:12;
 	font-family:宋体;
-	color:#ffffff;
-	backgroundColor:#333333;
+	color:#000000;
 }
 
 s|Button {
@@ -60,7 +59,7 @@ ns|ToolTip {
 
 .iWin {
 	cornerRadius:3;
-	backgroundColor:#000000;
+	backgroundColor:#8DCBF5;
 	backgroundAlpha:0.8;
 	borderColor:#999999;
 	borderStyle:solid;}
@@ -116,3 +115,18 @@ utils|Status {
 #relayStatus {
 	color:#999999;
 }
+.box
+{   
+	border-style: solid;   
+	border-thickness: 1;   
+	border-skin:ClassReference("com.sina.microblog.ui.components.style.GradientBorder");   
+	fill-colors: #8DCBF5, #FFFFFF;   
+	corner-radius: 10;   
+	drop-shadow-enabled: false;  
+	borderColor: #868397;
+	borderAlpha: 0.99;
+	roundedBottomCorners: true;
+	cornerRadius: 5;
+	/*shadowDistance: 2;
+	shadowDirection: left;*/
+} 

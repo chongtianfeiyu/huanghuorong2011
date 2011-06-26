@@ -2,7 +2,9 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%"
 	xmlns:mainPanel="com.sina.microblog.ui.mainPanel.*" 
 	xmlns:utils="com.sina.microblog.ui.utils.*"
-	creationComplete="onCreationComplete()" xmlns:s="library://ns.adobe.com/flex/spark">
+	xmlns:comps="com.sina.microblog.ui.components.*"
+	creationComplete="onCreationComplete()" 
+	xmlns:s="library://ns.adobe.com/flex/spark">
 	<mx:Script>
 		<![CDATA[
 			import com.sina.microblog.core.ClientEvent;
@@ -86,60 +88,60 @@
 			{
 				_controller.mainData.currentPos = "首页";
 				_controller.loadFriendsTimeline();
-				mainList.itemRenderer = StatusFactory;
+//				mainList.itemRenderer = StatusFactory;
 			}
 			private function jumpToFriendsPage(event:ClientEvent):void
 			{
 				_controller.mainData.currentPos = "关注列表";
-				mainList.itemRenderer = FriendFactory;
+//				mainList.itemRenderer = FriendFactory;
 			}
 			private function jumpToFansPage(event:ClientEvent):void
 			{
 				_controller.mainData.currentPos = "粉丝列表";
-				mainList.itemRenderer = FollowerFactory;
+//				mainList.itemRenderer = FollowerFactory;
 			}
 			private function jumpToStatusPage(event:ClientEvent):void
 			{
 				_controller.mainData.currentPos = "微博列表";
-				mainList.itemRenderer = StatusFactory;
+//				mainList.itemRenderer = StatusFactory;
 			}
 			private function jumpToReceiveMsgsPage(event:ClientEvent):void
 			{
 				_controller.mainData.currentPos = "我收到的私信";
 				_controller.loadReceivedDirectMsg();
-				mainList.itemRenderer = DirectMsgFactory;
+//				mainList.itemRenderer = DirectMsgFactory;
 			}
 			private function jumpToSentMsgsPage(event:ClientEvent):void
 			{
 				_controller.mainData.currentPos = "我发送的私信";
 				_controller.loadSentDirectMsg();
-				mainList.itemRenderer = DirectMsgFactory;
+//				mainList.itemRenderer = DirectMsgFactory;
 			}
 			private function jumpToReceivedCommentsPage(event:ClientEvent):void
 			{
 				_controller.mainData.currentPos = "我收到的评论";
 				_controller.loadCommentsTimeline();
-				mainList.itemRenderer = CommentFactory;
+//				mainList.itemRenderer = CommentFactory;
 			}
 			private function jumpToSentCommentsPage(event:ClientEvent):void
 			{
 				_controller.mainData.currentPos = "我发出的评论";
 				_controller.loadMyComments();
-				mainList.itemRenderer = CommentFactory;
+//				mainList.itemRenderer = CommentFactory;
 			}
 			
 			private function jumpToFavoritesPage(event:ClientEvent):void
 			{
 				_controller.mainData.currentPos = "我的收藏";
 				_controller.loadfavorites();
-				mainList.itemRenderer = StatusFactory;
+//				mainList.itemRenderer = StatusFactory;
 			}
 			
 			private function jumpToMentionsPage(event:ClientEvent):void
 			{
 				_controller.mainData.currentPos = "@我的";
 				_controller.loadMentions();
-				mainList.itemRenderer = StatusFactory;
+//				mainList.itemRenderer = StatusFactory;
 			}
 			
 			private function onStartRepost(event:ClientEvent):void
@@ -187,7 +189,7 @@
 		<mainPanel:TitleBar controller="{_controller}"/>
 		<mainPanel:ProfileArea id="profileArea" controller="{_controller}" shownUser="{_controller.mainData.shownUser}"/>
 		<mx:HRule width="100%"/>
-		<utils:CustomList id="mainList" width="100%" height="100%" controller="{_controller}"/>
+		<comps:SupperList id="mainList" width="100%" height="100%" controller="{_controller}"/>
 		<mx:Spacer/>
 		<mx:HRule width="100%"/>
 		<s:VGroup width="100%" horizontalAlign="right">

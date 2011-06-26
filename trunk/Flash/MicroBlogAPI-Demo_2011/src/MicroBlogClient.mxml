@@ -10,7 +10,8 @@
 	title="创意AIR微博-v1.0修正版 by Winters"
 	titleIcon="{titleIco}"
 	width="400"
-	height="700">
+	height="700"
+	backgroundColor="#8DCBF5">
 	<fx:Style source="style.css"/>
 	<fx:Script>
 		<![CDATA[
