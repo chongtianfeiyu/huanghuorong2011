@@ -82,7 +82,7 @@
 
 		]]>
 	</fx:Script>
-	<s:BorderContainer styleName="iWin"
+	<s:BorderContainer backgroundAlpha="0"
 					   width="100%"
 					   height="100%">
 		<s:VGroup width="100%"
