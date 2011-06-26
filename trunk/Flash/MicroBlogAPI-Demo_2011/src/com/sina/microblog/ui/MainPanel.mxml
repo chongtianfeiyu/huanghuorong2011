@@ -4,6 +4,11 @@
 	xmlns:utils="com.sina.microblog.ui.utils.*"
 	xmlns:comps="com.sina.microblog.ui.components.*"
 	creationComplete="onCreationComplete()" 
+	borderVisible="true"
+	borderColor="#FFFFFF"
+	borderStyle="solid"
+	verticalScrollPolicy="off"
+	horizontalScrollPolicy="off"
 	xmlns:s="library://ns.adobe.com/flex/spark">
 	<mx:Script>
 		<![CDATA[
@@ -11,6 +16,7 @@
 			import com.sina.microblog.core.MainController;
 			import com.sina.microblog.data.MicroBlogStatus;
 			import com.sina.microblog.data.MicroBlogUser;
+			import com.sina.microblog.ui.components.StatusItemRenderer;
 			import com.sina.microblog.ui.mainPanel.DirectMsgPanel;
 			import com.sina.microblog.ui.mainPanel.RepostPanel;
 			import com.sina.microblog.ui.utils.Comment;
@@ -21,6 +27,7 @@
 			
 			import flash.events.MouseEvent;
 			
+			import mx.collections.ArrayCollection;
 			import mx.events.FlexEvent;
 			
 			private const FriendFactory:ClassFactory = new ClassFactory(Friend);
@@ -59,7 +66,11 @@
 			{
 				expendBtn.addEventListener(MouseEvent.CLICK, onExpendBtnClick);
 				jumpToHomePage(null);
-				
+				_controller.addEventListener(ClientEvent.LOAD_FRIENDS_TIMELINE_RESULT , updateTimelineList);
+				_controller.addEventListener(ClientEvent.LOAD_COMMENTS_TIMELINE_RESULT, updateCommentList);
+				_controller.addEventListener(ClientEvent.LOAD_DIRECT_MESSAGES_RECEIVED_RESULT , updateDirectMsgList);
+				_controller.addEventListener(ClientEvent.LOAD_FOLLOWERS_INFO_RESULT   , updateFollowerList);
+				_controller.addEventListener(ClientEvent.LOAD_FRIENDS_INFO_RESULT     , updateFriendList);
 				_controller.addEventListener(ClientEvent.UPDATE_STATUS_SUCCESS, 		function(e:ClientEvent):void{
 					if(publishArea.height > 0)
 					{
@@ -86,27 +97,46 @@
 			
 			private function jumpToHomePage(event:ClientEvent):void
 			{
+				if(event!=null){
+					TabNav.selectedIndex = 0;
+					return;
+				}
 				_controller.mainData.currentPos = "首页";
 				_controller.loadFriendsTimeline();
 //				mainList.itemRenderer = StatusFactory;
 			}
 			private function jumpToFriendsPage(event:ClientEvent):void
 			{
+				if(event!=null){
+					TabNav.selectedIndex = 3;
+					return;
+				}
 				_controller.mainData.currentPos = "关注列表";
+				_controller.loadUserFriends(_controller.mainData.currentUser);
 //				mainList.itemRenderer = FriendFactory;
 			}
 			private function jumpToFansPage(event:ClientEvent):void
 			{
+				if(event!=null){
+					TabNav.selectedIndex = 4;
+					return;
+				}
 				_controller.mainData.currentPos = "粉丝列表";
+				_controller.loadUserFollowers(_controller.mainData.currentUser);
 //				mainList.itemRenderer = FollowerFactory;
 			}
 			private function jumpToStatusPage(event:ClientEvent):void
 			{
 				_controller.mainData.currentPos = "微博列表";
+				_controller.loadUserStatus(_controller.mainData.currentUser);
 //				mainList.itemRenderer = StatusFactory;
 			}
 			private function jumpToReceiveMsgsPage(event:ClientEvent):void
 			{
+				if(event!=null){
+					TabNav.selectedIndex = 1;
+					return;
+				}
 				_controller.mainData.currentPos = "我收到的私信";
 				_controller.loadReceivedDirectMsg();
 //				mainList.itemRenderer = DirectMsgFactory;
@@ -119,6 +149,10 @@
 			}
 			private function jumpToReceivedCommentsPage(event:ClientEvent):void
 			{
+				if(event!=null){
+					TabNav.selectedIndex = 2;
+					return;
+				}
 				_controller.mainData.currentPos = "我收到的评论";
 				_controller.loadCommentsTimeline();
 //				mainList.itemRenderer = CommentFactory;
@@ -144,6 +178,21 @@
 //				mainList.itemRenderer = StatusFactory;
 			}
 			
+			private function updateTimelineList(e:ClientEvent):void{
+				mainList.dataProvider = e.data as ArrayCollection;
+			}
+			private function updateCommentList(e:ClientEvent):void{
+				mainListComment.dataProvider = e.data as ArrayCollection;
+			}
+			private function updateDirectMsgList(e:ClientEvent):void{
+				mainListDirect.dataProvider = e.data as ArrayCollection;
+			}
+			private function updateFollowerList(e:ClientEvent):void{
+				mainListFollower.dataProvider = e.data as ArrayCollection;
+			}
+			private function updateFriendList(e:ClientEvent):void{
+				mainListFriend.dataProvider = e.data as ArrayCollection;
+			}
 			private function onStartRepost(event:ClientEvent):void
 			{
 				repostPanel.statusData = event.data as MicroBlogStatus
@@ -183,13 +232,56 @@
 //			import com.sina.microblog.ui.utils.DirectMsg;
 //			import com.sina.microblog.ui.utils.Status;
 //			import com.sina.microblog.ui.utils.User;
+
+			protected function tab_status_clickHandler(event:FlexEvent):void
+			{
+				jumpToHomePage(null);
+			}
+
+			protected function tab_comment_clickHandler(event:FlexEvent):void
+			{
+				jumpToReceivedCommentsPage(null);
+			}
+
+
+			protected function tab_direct_showHandler(event:FlexEvent):void
+			{
+				jumpToReceiveMsgsPage(null);
+			}
+
+
+			protected function tab_follower_showHandler(event:FlexEvent):void
+			{
+				jumpToFansPage(null);
+			}
+			protected function tab_friend_showHandler(event:FlexEvent):void
+			{
+				jumpToFriendsPage(null);
+			}
 		]]>
 	</mx:Script>
 	<mx:VBox id="container" width="100%" y="{navigator.y + navigator.height}" height="{this.height - container.y}" verticalGap="1">
 		<mainPanel:TitleBar controller="{_controller}"/>
 		<mainPanel:ProfileArea id="profileArea" controller="{_controller}" shownUser="{_controller.mainData.shownUser}"/>
 		<mx:HRule width="100%"/>
-		<comps:SupperList id="mainList" width="100%" height="100%" controller="{_controller}"/>
+		<mx:TabNavigator id="TabNav" width="100%" height="100%" backgroundAlpha="0">
+			<mx:VBox id="tab_status" label = '我的首页' show="tab_status_clickHandler(event)">
+				<comps:SupperList id="mainList" width="100%" height="100%"/>
+			</mx:VBox>
+			<mx:VBox id="tab_direct" label = '我的私信' show="tab_direct_showHandler(event)">
+				<comps:SupperListDirectMsg id="mainListDirect" width="100%" height="100%"/>
+			</mx:VBox>
+			<mx:VBox id="tab_comment" label = '我的评论' show="tab_comment_clickHandler(event)">
+				<comps:SupperListComment id="mainListComment" width="100%" height="100%"/>
+			</mx:VBox> 
+			<mx:VBox id="tab_follower" label = '我关注的' show="tab_follower_showHandler(event)">
+				<comps:SupperListFollower id="mainListFollower" width="100%" height="100%"/>
+			</mx:VBox> 
+			<mx:VBox id="tab_friend" label = '我的粉丝' show="tab_friend_showHandler(event)">
+				<comps:SupperListFriend id="mainListFriend" width="100%" height="100%"/>
+			</mx:VBox> 
+		</mx:TabNavigator>
+		
 		<mx:Spacer/>
 		<mx:HRule width="100%"/>
 		<s:VGroup width="100%" horizontalAlign="right">

@@ -44,14 +44,15 @@
 	<s:Scroller left="0" top="0" right="0" bottom="0" id="scroller" 
 				minViewportInset="1" focusEnabled="false">
 		<s:DataGroup left="8" right="8" top="8" bottom="8" 
-			dataProvider="{_dataProvider}">
+			         dataProvider="{_dataProvider}" 
+					 rollOverColor="#8DCBF5">
 			<s:layout>
 				<s:VerticalLayout gap="1" />
 			</s:layout>
 			
 			<s:itemRenderer>
 				<fx:Component>
-					<item:StatusItemRenderer controller ="{outerDocument._controller}"/>
+					<item:StatusItemRenderer/>
 				</fx:Component>
 			</s:itemRenderer>
 		</s:DataGroup>

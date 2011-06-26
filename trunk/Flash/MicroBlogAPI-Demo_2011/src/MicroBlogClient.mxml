@@ -11,6 +11,8 @@
 	titleIcon="{titleIco}"
 	width="400"
 	height="700"
+	verticalScrollPolicy="off"
+	horizontalScrollPolicy="off"
 	backgroundColor="#8DCBF5">
 	<fx:Style source="style.css"/>
 	<fx:Script>
@@ -38,7 +40,7 @@
 			private var dockImageClass:Class; 
 			private var dockImage:Bitmap = new dockImageClass();  
 			[Bindable]
-			private var controller:MainController = new MainController();
+			public var controller:MainController = new MainController();
 			private var statusBarMediator:StatusBarMediator = new StatusBarMediator();
 			
 			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
@@ -79,6 +81,7 @@
 //				var sHeight:uint = Screen.mainScreen.visibleBounds.height;
 				move(50, 10);
 				trayDock();
+				maxWin();
 			}
 				
 			private function trayDock():void
@@ -106,10 +109,15 @@
 //				return menu;   
 				return null;
 			} 
+			
+			private function maxWin():void{//最大化/恢复 
+				this.maximize(); 
+			}
 		]]>
 	</fx:Script>
-	<mx:ViewStack id="viewStack" width="100%" height="100%">
+	<mx:ViewStack id="viewStack" width="405" height="100%" >
 		<ui:LoginPanel id="loginPanel" controller="{controller}"/>
 		<ui:MainPanel id="mainPanel" controller="{controller}"/>
 	</mx:ViewStack>
+	<mx:VRule x="420" y="0" height="100%"/>
 </mx:WindowedApplication>

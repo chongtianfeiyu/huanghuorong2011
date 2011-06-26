@@ -24,7 +24,7 @@ package com.sina.microblog.ui.utils
 			super.createChildren();
 			container.verticalScrollPolicy = "off";
 			container.setStyle("verticalGap", 0);
-			container.setStyle("backgroundColor", 0x000000);
+			//container.setStyle("backgroundColor", 0x000000);
 			container.setStyle("horizontalAlign", "center");
 			super.addChild(container);
 		}
