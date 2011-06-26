@@ -69,6 +69,12 @@ package com.sina.microblog.core
 		
 		public static const OPEN_CUSTOME_BROWSER:String = "OpenCustomeBrowser";
 		
+		public static const LOAD_FRIENDS_TIMELINE_RESULT:String = "loadFriendsTimeLineResult";
+		public static const LOAD_COMMENTS_TIMELINE_RESULT:String = "loadCommentsTimelineResult";
+		public static const LOAD_DIRECT_MESSAGES_RECEIVED_RESULT:String = "loadDirectMessagesReceivedResult";
+		
+		public static const LOAD_FRIENDS_INFO_RESULT:String = "loadFriendsInfoResult";
+		public static const LOAD_FOLLOWERS_INFO_RESULT:String = "loadFollowersInfoResult";
 		public var data:Object;
 		public function ClientEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
 		{

@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<utils:User xmlns:mx="http://www.adobe.com/2006/mxml" width="100%"
+<utils:User xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			xmlns:s="library://ns.adobe.com/flex/spark"
+			xmlns:mx="library://ns.adobe.com/flex/mx" width="100%"
+			initialize="user1_initializeHandler(event)"
 	xmlns:utils="com.sina.microblog.ui.utils.*">
-	<mx:Script>
+	<fx:Script>
 		<![CDATA[
 			import com.sina.microblog.core.ClientEvent;
 			import com.sina.microblog.core.MainController;
 			import com.sina.microblog.core.utils.EmbedResource;
 			import com.sina.microblog.data.MicroBlogUser;
+			
+			import mx.core.FlexGlobals;
+			import mx.events.FlexEvent;
 			
 			private function follow():void
 			{
@@ -22,8 +28,14 @@
 				e.data = userData;
 				dispatchEvent(e);
 			}
+
+			protected function user1_initializeHandler(event:FlexEvent):void
+			{
+				_controller = FlexGlobals.topLevelApplication.controller;
+			}
+
 		]]>
-	</mx:Script>
+	</fx:Script>
 	<mx:VBox width="100%" verticalGap="1">
 		<mx:HBox width="100%">
 			<mx:Image width="50" height="50" source="{profileImageSource}"/>

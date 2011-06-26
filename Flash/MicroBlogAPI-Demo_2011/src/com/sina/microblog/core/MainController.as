@@ -221,6 +221,9 @@ package com.sina.microblog.core
 		private function onLoadFriendsTimeLineResult(event:MicroBlogEvent):void
 		{
 			mainData.mainList = new ArrayCollection(event.result as Array);
+			var e:ClientEvent = new ClientEvent(ClientEvent.LOAD_FRIENDS_TIMELINE_RESULT);
+			e.data = mainData.mainList;
+			dispatchEvent(e);
 		}
 		private function onUpdateStatusResult(event:MicroBlogEvent):void
 		{
@@ -249,10 +252,16 @@ package com.sina.microblog.core
 		private function onLoadFriendsResult(event:MicroBlogEvent):void
 		{
 			mainData.mainList = new ArrayCollection(event.result as Array);
+			var e:ClientEvent = new  ClientEvent(ClientEvent.LOAD_FRIENDS_INFO_RESULT);
+			e.data = mainData.mainList;
+			dispatchEvent(e);
 		}
 		private function onLoadFollowersResult(event:MicroBlogEvent):void
 		{
 			mainData.mainList = new ArrayCollection(event.result as Array);
+			var e:ClientEvent = new  ClientEvent(ClientEvent.LOAD_FOLLOWERS_INFO_RESULT);
+			e.data = mainData.mainList;
+			dispatchEvent(e);
 		}
 		private function onLoadUserTimeLineResult(event:MicroBlogEvent):void
 		{
@@ -271,6 +280,9 @@ package com.sina.microblog.core
 		private function onLoadCommentsTimelineResult(event:MicroBlogEvent):void
 		{
 			mainData.mainList = new ArrayCollection(event.result as Array);
+			var e:ClientEvent = new  ClientEvent(ClientEvent.LOAD_COMMENTS_TIMELINE_RESULT);
+			e.data = mainData.mainList;
+			dispatchEvent(e);
 		}
 		private function onLoadMyCommentsResult(event:MicroBlogEvent):void
 		{
@@ -289,6 +301,9 @@ package com.sina.microblog.core
 		private function onLoadReceivedDirectMsgResult(event:MicroBlogEvent):void
 		{
 			mainData.mainList = new ArrayCollection(event.result as Array);
+			var e:ClientEvent = new  ClientEvent(ClientEvent.LOAD_DIRECT_MESSAGES_RECEIVED_RESULT);
+			e.data = mainData.mainList;
+			dispatchEvent(e);
 		}		
 		private function onLoadSentDirectMsgResult(event:MicroBlogEvent):void
 		{

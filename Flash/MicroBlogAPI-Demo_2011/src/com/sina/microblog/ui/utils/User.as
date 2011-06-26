@@ -7,7 +7,9 @@ package com.sina.microblog.ui.utils
 	import mx.containers.Panel;
 	import mx.events.FlexEvent;
 	
-	public class User extends Canvas
+	import spark.components.supportClasses.ItemRenderer;
+	
+	public class User extends ItemRenderer
 	{
 		[Bindable]
 		protected var _controller:MainController;
@@ -26,10 +28,10 @@ package com.sina.microblog.ui.utils
 		public function User():void
 		{
 			super()
-			horizontalScrollPolicy="off";
-			verticalScrollPolicy="off";
-			setStyle("fontFamily", "simhei");
-			setStyle("fontSize", 11);
+//			horizontalScrollPolicy="off";
+//			verticalScrollPolicy="off";
+			setStyle("fontFamily", "宋体");
+			setStyle("fontSize", 12);
 			addEventListener(FlexEvent.DATA_CHANGE, onDataChange);
 		}
 		

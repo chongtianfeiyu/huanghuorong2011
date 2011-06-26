@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%"
 	xmlns:utils="com.sina.microblog.ui.utils.*" 
-	horizontalScrollPolicy="off" backgroundColor="black" fontFamily="simhei" fontSize="11">
+	horizontalScrollPolicy="off"
+	color="#000000">
 	<mx:Script>
 		<![CDATA[
 			import com.sina.microblog.core.MainController;
