@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:s="library://ns.adobe.com/flex/spark"
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
+		   xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   width="100%"
+	xmlns:utils="com.sina.microblog.ui.utils.*"
+	dataChange="onDataChange()" 
+	creationComplete="creationCompleteHandler(event)"
+	fontFamily="微软雅黑" fontSize="12"
+	focusColor="#FFFFFF">
+	<fx:Script>
+		<![CDATA[
+			import com.sina.microblog.core.ClientEvent;
+			import com.sina.microblog.core.MainController;
+			import com.sina.microblog.core.utils.Utility;
+			import com.sina.microblog.data.MicroBlogStatus;
+			import com.sina.microblog.ui.utils.Utils;
+			
+			import flash.net.URLRequest;
+			
+			import mx.events.FlexEvent;
+			[Bindable]
+			private var _controller:MainController;
+			
+			[Bindable]
+			private var userName:String;
+			[Bindable]
+			protected var profileImageSource:String;
+			[Bindable]
+			private var text:String;
+			[Bindable]
+			private var time:String;
+			[Bindable]
+			private var statusSource:XML;
+			[Bindable]
+			private var ifMedia:Boolean;
+			
+			[Bindable]
+			private var commentPanelHeight:Number;
+			[Bindable]
+			private var ifOwner:Boolean;
+			[Bindable]
+			private var ifFavorite:Boolean;
+			[Bindable]
+			private var hasRelay:Boolean;
+			[Bindable]
+			private var relayUserScreenName:String;
+			[Bindable]
+			private var relayUserID:String;
+			[Bindable]
+			private var relayUserUrl:String;
+			[Bindable]
+			private var relayStatusText:String;
+			[Bindable]
+			private var hasRelayPic:Boolean;
+			[Bindable]
+			private var relayThumbPicUrl:String;
+			[Bindable]
+			private var hasPic:Boolean;
+			[Bindable]
+			private var thumbPicUrl:String;
+			[Bindable]
+			private var from:String;
+			private var originalPicUrl:String;
+			private var originalRelayPicUrl:String;
+			
+			private function onDataChange():void
+			{
+				if(!statusData)
+				{
+					return;
+				}
+				commentPanelHeight = 0;
+				userName = statusData.user.screenName + ":"
+				profileImageSource = statusData.user.profileImageUrl;
+				text = statusData.text;
+				if(statusData.thumbPicUrl)
+				{
+					ifMedia = true;
+				}
+				else
+				{
+					ifMedia = false;
+				}
+//				statusSource = XML(statusData.source);
+				time = 	Utils.getDateString(statusData.createdAt);
+				ifOwner = (statusData.user.id == _controller.mainData.currentUser.id);
+				ifFavorite = statusData.isFavorited;
+				/**
+				 * 图片
+				 * */
+				hasPic=(data.thumbPicUrl == null || data.thumbPicUrl == "") ? false : true;
+				if (hasPic)
+				{
+					thumbPicUrl=data.thumbPicUrl;
+					originalPicUrl = data.originalPicUrl;
+				}
+				from = data.source;
+				/**
+				 * 转发原信息
+				 * */
+				hasRelay=(data.repost == null) ? false : true;
+				if (hasRelay)
+				{
+					relayUserScreenName=data.repost.user.screenName;
+					relayUserID=data.repost.user.id;
+					relayUserUrl="http://t.sina.com.cn/" + relayUserID;
+					relayStatusText="<a href='" + relayUserUrl + "' target='_blank'>" + relayUserScreenName + "</a>：" + Utils.getStatusHtmlText(data.repost.text);
+					hasRelayPic=(data.repost.thumbPicUrl == null || data.repost.thumbPicUrl == "") ? false : true;
+					if (hasRelayPic)
+					{
+						relayThumbPicUrl=data.repost.thumbPicUrl;
+						originalRelayPicUrl = data.repost.originalPicUrl;
+					}
+//					isFavoriteRelay=data.repost.isFavorited;
+				}
+			}
+			
+			private function linkToSource():void
+			{
+				var s:String = statusSource.a.@href;
+				flash.net.navigateToURL(new URLRequest(s));
+			}
+			
+			private function remove():void
+			{
+				_controller.removeStatus(statusData);
+			}
+			
+			private function repost():void
+			{
+				var e:ClientEvent = new ClientEvent(ClientEvent.START_REPOST_STATUS, true);
+				e.data = statusData;
+				dispatchEvent(e);
+			}
+			
+			private function favorite():void
+			{
+				_controller.favoriteStatus(statusData);
+			}
+			private function cancelFavorite():void
+			{
+				_controller.cancelFavoriteStatus(statusData)
+			}
+			
+			private function switchComment():void
+			{
+//				_controller.loadStatusComments(statusData);
+				if(commentPanel.height == 0)
+				{
+					commentPanel.height = undefined;
+				}
+				else
+				{
+					commentPanel.height = 0;
+				}
+			}
+			
+			private function publishComment():void
+			{
+				_controller.commentStatus(statusData, comment.text);
+			}
+			
+			public function set controller(value:MainController):void
+			{
+				_controller = value;
+			}
+			[Bindable]
+			private function get statusData():MicroBlogStatus
+			{
+				return data as MicroBlogStatus;
+			}
+			private function set statusData(value:MicroBlogStatus):void
+			{
+				
+			}
+
+			protected function thumbPic_clickHandler(event:MouseEvent):void
+			{
+				if(hasPic){
+					navigateToURL(new URLRequest(originalPicUrl), "_blank");
+				}else if(hasRelayPic){
+					navigateToURL(new URLRequest(originalRelayPicUrl), "_blank");
+				}
+//				var _loc_5:Point;
+//				var _loc_2:String;
+//				if (event.currentTarget == this.thumbPic)
+//				{
+//					_loc_2 = this.data.originalPicUrl;
+//				}
+//				var _loc_3:* ;//= this.app.getLikeWindow(_loc_2); FIXME
+//				if (_loc_3)
+//				{
+//					_loc_3.activate();
+//				}
+//				else
+//				{
+//					_loc_4 = ImageViewer.show("图片查看器", _loc_2);
+//					_loc_5 = event.target.localToGlobal(new Point());
+//					_loc_4.nativeWindow.x = _loc_5.x;
+//					_loc_4.nativeWindow.y = _loc_5.y + event.target.height;
+//				}
+			}
+
+
+			protected function creationCompleteHandler(event:FlexEvent):void
+			{
+				_controller.addEventListener(ClientEvent.COMMENT_STATUS_SUCCESS, 		function(e:ClientEvent):void{
+					if(commentPanel.height != 0)
+					{
+						commentPanel.height = 0;
+					}
+				});
+			}
+
+		]]>
+	</fx:Script>
+	<mx:Canvas width="100%" cornerRadius="5" left="7" right="7" top="7" bottom="7" 
+			   backgroundColor="#FFFFFF">
+	<mx:HBox width="100%" cornerRadius="10" left="7" right="7" top="7" bottom="7"
+			 >
+		<mx:Canvas width="50" height="50" > 
+			<mx:Image width="50" source="{profileImageSource}" mask="{maskCanvas}"/>
+			<mx:Canvas width="50" height="50" backgroundColor="#ff0000" 
+					   id="maskCanvas"  cornerRadius="5" borderStyle="solid"/> 
+		</mx:Canvas> 
+		<mx:VBox width="100%" verticalGap="5">
+			<mx:Label width="100%" text="{userName}" fontSize="12" fontFamily="宋体"/>
+			<mx:Text id="status" width="100%" htmlText="{text}" 
+					 fontSize="12" fontFamily="宋体"/>
+			<!--utils:MediaViewer id="mediaViewer" height="{ifMedia ? undefined : 0}" statusData="{ifMedia ? statusData : null}"/-->
+			<!-- 转发内容 -->
+			<mx:HBox width="100%" visible="{hasRelay}"
+					 includeInLayout="{hasRelay}">
+				<!--mx:Image width="50" source="{profileImageSource}"/-->
+				<mx:VBox width="100%" styleName="box" verticalGap="5">
+					<mx:Label width="100%" text="{relayUserScreenName}" fontSize="12" fontFamily="宋体"/>
+					<mx:Text width="100%" htmlText="{relayStatusText}" 
+							 fontSize="12" fontFamily="宋体"/>
+					<mx:Image id="thumbRelayPic" source="{relayThumbPicUrl}"
+							  visible="{hasRelayPic}"
+							  includeInLayout="{hasRelayPic}"
+							  width="{hasRelayPic?thumbRelayPic.contentWidth:0}"
+							  height="{hasRelayPic?thumbRelayPic.contentWidth:0}"
+							  click="thumbPic_clickHandler(event)"
+							  buttonMode="true"/>
+				</mx:VBox>
+			</mx:HBox>
+			<mx:Image id="thumbPic"
+					  source="{thumbPicUrl}"
+					  visible="{hasPic}"
+					  includeInLayout="{hasPic}"
+					  width="{hasPic?thumbPic.contentWidth:0}"
+					  height="{hasPic?thumbPic.contentWidth:0}"
+					  click="thumbPic_clickHandler(event)"
+					  buttonMode="true"/>
+			<mx:HBox width=" 100%" horizontalGap="0">
+				<mx:Label text="{time}" fontSize="12" fontFamily="宋体"/>
+				<utils:LabelButton htmlText="{'来自'+from}" click="linkToSource()" fontSize="12" fontFamily="宋体"/>
+				<mx:Spacer width="100%"/>
+				<utils:LabelButton id="removeBtn" text="删除" width="{ifOwner?undefined:0}" click="remove()" fontSize="12" fontFamily="宋体"/>
+				<utils:LabelButton id="retwitBtn" text="转发" width="{undefined}" click="repost()" fontSize="12" fontFamily="宋体"/>
+				<utils:LabelButton id="favoriteBtn" text="收藏" width="{ifFavorite?0:undefined}" click="favorite()" fontSize="12" fontFamily="宋体"/>
+				<utils:LabelButton id="cancelFavoriteBtn" text="取消收藏" width="{ifFavorite?undefined:0}" click="cancelFavorite()"/>
+				<utils:LabelButton id="commentBtn" text="评论" fontSize="12" fontFamily="宋体" click="switchComment()"/>
+			</mx:HBox>
+			<mx:VBox id="commentPanel" width="100%" height="{commentPanelHeight}">
+				<mx:Label id="commentNum"/>
+				<mx:VBox id="commentContainer" width="100%"/>
+				<mx:TextArea id="comment" width="100%" height="50" fontSize="12" fontFamily="宋体"/>
+				<mx:HBox width="100%" horizontalGap="0">
+					<mx:Spacer width="100%"/>
+					<mx:Button label="评论" click="publishComment()" fontSize="12" fontFamily="宋体"/>
+				</mx:HBox>	
+			</mx:VBox>
+			<!--mx:HRule width="100%"/-->
+		</mx:VBox>
+	</mx:HBox>
+	</mx:Canvas>
+</s:ItemRenderer>
