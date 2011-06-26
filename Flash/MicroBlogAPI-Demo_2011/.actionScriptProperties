@@ -18,7 +18,7 @@
         </excludedEntries>
       </libraryPathEntry>
       <libraryPathEntry kind="1" linkType="1" path="libs"/>
-      <libraryPathEntry kind="3" linkType="1" path="E:/Adobe Flash Builder 4/MicroBlog-weibosdk2011/bin/MicroBlog-weibosdk2011.swc" useDefaultLinkType="false"/>
+      <libraryPathEntry kind="3" linkType="1" path="/MicroBlog-weibosdk2011/bin/MicroBlog-weibosdk2011.swc" useDefaultLinkType="false"/>
     </libraryPath>
     <sourceAttachmentPath/>
   </compiler>
