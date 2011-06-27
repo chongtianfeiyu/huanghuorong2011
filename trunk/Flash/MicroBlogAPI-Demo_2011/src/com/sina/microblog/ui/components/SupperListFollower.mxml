@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+	     creationComplete="init()" 
+		 xmlns:item="com.sina.microblog.ui.utils.*">
+	<fx:Script>
+		<![CDATA[
+			import com.sina.microblog.core.MainController;
+			
+			import mx.binding.utils.BindingUtils;
+			import mx.collections.ArrayCollection;
+			[Bindable]
+			private var _dataProvider:ArrayCollection;
+			[Bindable]
+			public var _controller:MainController;
+			
+			private function init():void
+			{
+			}
+			public function set controller(value:MainController):void
+			{
+				_controller = value;
+				if(!_controller)
+				{
+					return;
+				}
+				BindingUtils.bindProperty(this, "dataProvider", _controller.mainData, "mainList");
+			}
+			public function set dataProvider(value:ArrayCollection):void
+			{
+				_dataProvider = value;
+			}
+		]]>
+	</fx:Script>
+	<!--s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
+		<s:fill>
+			<s:SolidColor color="#FFFF99"/>
+		</s:fill>
+		<s:filters>
+			<mx:DropShadowFilter distance="1"/>
+		</s:filters>
+	</s:Rect-->
+	<s:Scroller left="0" top="0" right="0" bottom="0" id="scroller" 
+				minViewportInset="1" focusEnabled="false">
+		<s:DataGroup left="8" right="8" top="8" bottom="8" 
+			         dataProvider="{_dataProvider}" 
+					 rollOverColor="#8DCBF5">
+			<s:layout>
+				<s:VerticalLayout gap="1" />
+			</s:layout>
+			
+			<s:itemRenderer>
+				<fx:Component>
+					<item:Follower/>
+				</fx:Component>
+			</s:itemRenderer>
+		</s:DataGroup>
+	</s:Scroller>
+</s:Group>
