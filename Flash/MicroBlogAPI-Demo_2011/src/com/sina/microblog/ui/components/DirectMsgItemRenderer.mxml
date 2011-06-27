@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				xmlns:fx="http://ns.adobe.com/mxml/2009"  
+				width="100%"
+	xmlns:utils="com.sina.microblog.ui.utils.*"
+	initialize="itemrenderer1_initializeHandler(event)"
+	dataChange="onDataChange()" fontFamily="宋体" fontSize="12">
+	<fx:Script>
+		<![CDATA[
+			import com.sina.microblog.core.ClientEvent;
+			import com.sina.microblog.core.MainController;
+			import com.sina.microblog.core.utils.EmbedResource;
+			import com.sina.microblog.data.MicroBlogDirectMessage;
+			
+			import mx.core.FlexGlobals;
+			import mx.events.FlexEvent;
+
+			[Bindable]
+			private var _controller:MainController;
+			
+			[Bindable]
+			private var _sendFrom:String;
+			[Bindable]
+			private var _sendTo:String;
+			[Bindable]
+			protected var profileImageSource:String;
+			[Bindable]
+			private var _content:String
+			
+			[Bindable]
+			private var _ifOwnder:Boolean;
+			[Bindable]
+			private var _ifFans:Boolean;
+			
+			private function onDataChange():void
+			{
+				if(!directMsgData)
+				{
+					return;
+				}
+
+				_sendFrom = directMsgData.sender.screenName;
+				_sendTo = directMsgData.recipient.screenName;
+				profileImageSource = directMsgData.sender.profileImageUrl;
+				_content = directMsgData.text;
+				
+				_ifOwnder = (directMsgData.sender.id == _controller.mainData.currentUser.id);
+				_ifFans = _ifOwnder ? directMsgData.recipient.isFollowingMe : directMsgData.sender.isFollowingMe;
+			}
+			
+			private function remove():void
+			{
+				_controller.removeDirectMsg(directMsgData);
+			}
+			
+			private function reply():void
+			{
+				var e:ClientEvent = new ClientEvent(ClientEvent.START_SEND_MSG, true);
+				e.data = _ifOwnder ? directMsgData.recipient : directMsgData.sender;
+				dispatchEvent(e);
+			}
+			
+			public function set controller(value:MainController):void
+			{
+				_controller = value;
+			}
+			
+			public function get directMsgData():MicroBlogDirectMessage
+			{
+				return data as MicroBlogDirectMessage;
+			}
+
+			protected function itemrenderer1_initializeHandler(event:FlexEvent):void
+			{
+				_controller = FlexGlobals.topLevelApplication.controller;
+			}
+
+		]]>
+	</fx:Script>
+	<mx:HBox width="100%">
+		<mx:Image width="50" source="{profileImageSource}"/>
+		<mx:VBox width="100%">
+			<mx:HBox width="100%" horizontalGap="0">
+				<mx:Label id="sendFromLabel" text="{_sendFrom}"/>
+				<mx:Label  text="发给"/>
+				<mx:Label id="sendToLabel" text="{_sendTo}"/>
+			</mx:HBox>
+			<mx:Text id="contentText" width="100%" text="{_content}"/>
+			<mx:HBox width="100%" horizontalGap="0">
+				<mx:Label id="timeLabel"/>
+				<mx:Spacer width="100%"/>
+				<utils:LabelButton text="回复" width="{_ifFans ? undefined : 0}" click="reply()"/>
+				<utils:LabelButton text="删除" click="remove()"/>
+			</mx:HBox>
+		</mx:VBox>
+	</mx:HBox>
+</s:ItemRenderer>
