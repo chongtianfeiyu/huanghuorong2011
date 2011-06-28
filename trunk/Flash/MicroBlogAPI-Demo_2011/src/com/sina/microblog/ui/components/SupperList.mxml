@@ -57,4 +57,11 @@
 			</s:itemRenderer>
 		</s:DataGroup>
 	</s:Scroller>
+	<s:HGroup width="200" bottom="5" right="50" height="20">
+		<s:Label text="上一页" width="50"/>
+		<s:Label text="|" width="10"/>
+		<s:Label text="下一页" width="50"/>
+	</s:HGroup>
+		
+			  
 </s:Group>
