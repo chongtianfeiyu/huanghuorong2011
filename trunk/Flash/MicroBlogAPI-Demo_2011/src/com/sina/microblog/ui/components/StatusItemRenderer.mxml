@@ -7,8 +7,7 @@
 	dataChange="onDataChange()" 
 	creationComplete="creationCompleteHandler(event)"
 	initialize="itemrenderer1_initializeHandler(event)"
-	fontFamily="微软雅黑" fontSize="12"
-	focusColor="#FFFFFF">
+	fontFamily="微软雅黑" fontSize="12">
 	<fx:Script>
 		<![CDATA[
 			import com.sina.microblog.core.ClientEvent;
@@ -18,6 +17,9 @@
 			import com.sina.microblog.ui.utils.Utils;
 			
 			import flash.net.URLRequest;
+			
+			import flashx.textLayout.conversion.TextConverter;
+			import flashx.textLayout.elements.TextFlow;
 			
 			import mx.core.FlexGlobals;
 			import mx.events.FlexEvent;
@@ -65,6 +67,8 @@
 			private var from:String;
 			private var originalPicUrl:String;
 			private var originalRelayPicUrl:String;
+			[Bindable]
+			private var textFlow:TextFlow;
 			
 			private function onDataChange():void
 			{
@@ -76,6 +80,11 @@
 				userName = statusData.user.screenName + ":"
 				profileImageSource = statusData.user.profileImageUrl;
 				text = statusData.text;
+				
+//				ricTxt.text = "";
+//				var markup:String = "<TextFlow xmlns='http://ns.adobe.com/textLayout/2008'><p>"+text+" <img source=\"http://img.t.sinajs.cn/t35/style/images/common/face/ext/normal/d8/sad.gif\"/> </p></TextFlow>";
+//				textFlow = TextConverter.importToFlow(markup, TextConverter.TEXT_LAYOUT_FORMAT);
+//				ricTxt.textFlow = textFlow;
 				if(statusData.thumbPicUrl)
 				{
 					ifMedia = true;
@@ -237,6 +246,27 @@
 			<mx:Label width="100%" text="{userName}" fontSize="12" fontFamily="宋体"/>
 			<mx:Text id="status" width="100%" htmlText="{text}" 
 					 fontSize="12" fontFamily="宋体"/>
+			<!--s:RichEditableText id="ricTxt"
+								editable="true"
+								selectable="true"
+								width="310"
+								height="124"
+								paddingTop="5"
+								paddingLeft="5"
+								paddingBottom="5"
+								paddingRight="5"
+								color="#000000"
+								lineBreak="toFit">
+				<s:textFlow>
+					<s:TextFlow>
+						<s:p>This is a RichEditableText component of flex 4. It has feature of writing, editing text in multiple lines. It too have the hyperlinks, scrolling, selection properties.
+							At runtime of application you can edit and can format the paragraph also.
+							To visit: <s:a href="http://www.roseindia.net">Roseindia.net</s:a> hold CTRL key and then click.
+							<s:img source="http://img.t.sinajs.cn/t35/style/images/common/face/ext/normal/d8/sad.gif"/>
+						</s:p>
+					</s:TextFlow>
+				</s:textFlow>
+			</s:RichEditableText-->
 			<!--utils:MediaViewer id="mediaViewer" height="{ifMedia ? undefined : 0}" statusData="{ifMedia ? statusData : null}"/-->
 			<!-- 转发内容 -->
 			<mx:HBox width="100%" visible="{hasRelay}"
@@ -273,10 +303,12 @@
 				<utils:LabelButton id="cancelFavoriteBtn" text="取消收藏" width="{ifFavorite?undefined:0}" click="cancelFavorite()"/>
 				<utils:LabelButton id="commentBtn" text="评论" fontSize="12" fontFamily="宋体" click="switchComment()"/>
 			</mx:HBox>
-			<mx:VBox id="commentPanel" width="100%" height="{commentPanelHeight}">
-				<mx:Label id="commentNum"/>
-				<mx:VBox id="commentContainer" width="100%"/>
-				<mx:TextArea id="comment" width="100%" height="50" fontSize="12" fontFamily="宋体"/>
+			<mx:VBox id="commentPanel" width="100%" 
+					 height="{commentPanelHeight}" styleName="box">
+				<!--mx:Label id="commentNum"/>
+				<mx:VBox id="commentContainer" width="100%"/-->
+				<s:TextArea id="comment" width="100%" height="50" borderVisible="false"
+							 fontSize="12" fontFamily="宋体" />
 				<mx:HBox width="100%" horizontalGap="0">
 					<mx:Spacer width="100%"/>
 					<mx:Button label="评论" click="publishComment()" fontSize="12" fontFamily="宋体"/>

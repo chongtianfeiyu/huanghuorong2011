@@ -78,9 +78,9 @@ package com.sina.microblog.core
 			microBlogAPI.addEventListener(MicroBlogEvent.LOAD_MENSIONS_RESULT, 			onMensionsResult);
 			microBlogAPI.addEventListener(MicroBlogEvent.OPEN_CUSTOME_BROWSER, 			onOpenCustomeBrowser);
 		
-			appUpdater = new ApplicationUpdaterUI();
-			appUpdater.configurationFile = File.applicationDirectory.resolvePath("update-config.xml"); 
-			appUpdater.initialize();
+//			appUpdater = new ApplicationUpdaterUI();
+//			appUpdater.configurationFile = File.applicationDirectory.resolvePath("update-config.xml"); 
+//			appUpdater.initialize();
 		}
 		
 		private function onErrorHandler(event:MicroBlogErrorEvent):void

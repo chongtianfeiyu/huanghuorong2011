@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:WindowedApplication 
+<s:WindowedApplication 
 	xmlns:s="library://ns.adobe.com/flex/spark"
 	xmlns:mx="library://ns.adobe.com/flex/mx"
 	xmlns:fx="http://ns.adobe.com/mxml/2009"
-	layout="absolute"
 	xmlns:ui="com.sina.microblog.ui.*" 
-	statusBarFactory="com.sina.microblog.ui.StatusBar"
 	creationComplete="windowedapplication1_creationCompleteHandler(event)"
-	title="创意AIR微博-v1.0修正版 by Winters"
+	title="创意AIR微博客户端"
 	titleIcon="{titleIco}"
-	width="400"
+	width="410"
 	height="700"
-	verticalScrollPolicy="off"
-	horizontalScrollPolicy="off"
-	backgroundColor="#8DCBF5">
+	skinClass="com.sina.microblog.ui.components.skin.ApplicationWindowSkin"
+	>
 	<fx:Style source="style.css"/>
 	<fx:Script>
 		<![CDATA[
+			import air.update.ApplicationUpdater;
 			import air.update.ApplicationUpdaterUI;
 			import air.update.events.DownloadErrorEvent;
+			import air.update.events.StatusUpdateErrorEvent;
+			import air.update.events.StatusUpdateEvent;
 			import air.update.events.UpdateEvent;
 			
 			import com.sina.microblog.core.ClientEvent;
 			import com.sina.microblog.core.MainController;
 			import com.sina.microblog.core.StatusBarMediator;
+			import com.sina.microblog.ui.components.call.LoadMaskManager;
+			import com.sina.microblog.ui.components.skin.ApplicationWindowSkin;
 			
 			import flash.events.ErrorEvent;
 			import flash.events.ProgressEvent;
 			
 			import mx.controls.Alert;
 			import mx.events.FlexEvent;
+			
+			import spark.components.mediaClasses.VolumeBar;
 			
 			[Bindable]
 			private var _version:String;
@@ -44,6 +48,7 @@
 			private var statusBarMediator:StatusBarMediator = new StatusBarMediator();
 			
 			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
+			private var updater:ApplicationUpdater = new ApplicationUpdater();
 			
 			override protected function initializationComplete():void
 			{
@@ -81,7 +86,9 @@
 //				var sHeight:uint = Screen.mainScreen.visibleBounds.height;
 				move(50, 10);
 				trayDock();
-				maxWin();
+				applicationLaunched();
+//				controller.appUpdater.checkNow()
+				//maxWin();
 			}
 				
 			private function trayDock():void
@@ -113,11 +120,127 @@
 			private function maxWin():void{//最大化/恢复 
 				this.maximize(); 
 			}
+			
+			/**
+			 * 自动更新
+			 */ 
+			private function applicationLaunched():void{
+				NativeApplication.nativeApplication.addEventListener(BrowserInvokeEvent.BROWSER_INVOKE, function(e:BrowserInvokeEvent):void{
+					var arr:Array = e.arguments;
+					trace('');
+				});
+				updater.updateURL = "http://hambao.net/air/microblog/update.xml";
+				updater.delay = 1;
+				updater.addEventListener(UpdateEvent.INITIALIZED, function(e:UpdateEvent):void{
+					//打开进度条
+					LoadMaskManager.showMask("检查更新...(点击取消)");
+					updater.checkNow();
+				});
+				updater.addEventListener(StatusUpdateEvent.UPDATE_STATUS, function(e:StatusUpdateEvent):void{
+					e.preventDefault();
+					//关闭操作进度条
+					LoadMaskManager.closeMask();
+					if(e.available){
+						updatePannel.visible = true;
+						newVersionTip.text  = "发现新版本："+e.version;
+						newVersionDesc.text = "当前版本："+e.currentTarget.currentVersion;
+					}
+				});
+				updater.addEventListener(StatusUpdateErrorEvent.UPDATE_ERROR, function(e:StatusUpdateErrorEvent):void{
+					updatePannel.visible = false;
+				});
+				updater.addEventListener(ErrorEvent.ERROR, function(e:ErrorEvent):void{
+					updatePannel.visible = false;
+				});
+				updater.addEventListener(UpdateEvent.DOWNLOAD_START, function(e:UpdateEvent):void{
+					updateProgress.visible = true;
+				});
+				updater.addEventListener(ProgressEvent.PROGRESS, function(e:ProgressEvent):void{
+					updateProgress.setProgress(e.bytesLoaded, e.bytesTotal);
+					updateProgress.label = "更新进度："+ Math.round(e.bytesLoaded/e.bytesTotal*100)+"%";
+//					updateProgress.maximum = e.bytesTotal;
+				});
+				updater.addEventListener(DownloadErrorEvent.DOWNLOAD_ERROR, function(e:DownloadErrorEvent):void{
+					updateProgress.visible = false;
+				});
+				updater.addEventListener(UpdateEvent.BEFORE_INSTALL, function(e:UpdateEvent):void{
+					trace("开始安装");
+				});
+				updater.initialize();
+			}
+
+			protected function opProgress_clickHandler(event:MouseEvent):void
+			{
+				LoadMaskManager.closeMask();
+			}
+
+
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				updatePannel.visible = false;
+				updater.downloadUpdate();
+			}
+
+
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				updatePannel.visible = false;
+			}
+
 		]]>
 	</fx:Script>
-	<mx:ViewStack id="viewStack" width="405" height="100%" >
+	<!--mx:HBox x="0" y="0" width="100%" height="30" horizontalGap="2">
+		<mx:Label text="{title}" width="{width-60}"/>
+		<mx:Label text="最小化" buttonMode="true"/>
+		<mx:Label text="最大化" buttonMode="true"/>
+		<mx:Label text="关闭"   buttonMode="true"/>
+	</mx:HBox-->
+	<mx:ViewStack id="viewStack" width="405" height="{height-50}" y="0">
 		<ui:LoginPanel id="loginPanel" controller="{controller}"/>
 		<ui:MainPanel id="mainPanel" controller="{controller}"/>
 	</mx:ViewStack>
-	<mx:VRule x="420" y="0" height="100%"/>
-</mx:WindowedApplication>
+	<!-- 自动更新 -->
+	<s:BorderContainer id="updatePannel" visible="false" 
+					   borderVisible="false" backgroundAlpha="0"
+					   top="10" bottom="10" left="10" right="10">
+		<s:layout>
+			<s:VerticalLayout verticalAlign="middle" horizontalAlign="center"/>
+		</s:layout>
+		<mx:VBox paddingLeft="10" paddingRight="10" 
+				 paddingTop="10" paddingBottom="10" styleName="box">
+			<s:Label text="更新提示"/>
+			<s:Label id="newVersionTip"/>
+			<s:Label id="newVersionDesc"/>
+			<mx:Spacer height="30"/>
+			<s:HGroup gap="10">
+				<s:Button label="立即更新" click="button1_clickHandler(event)"/>
+				<s:Button label="稍后再说" click="button2_clickHandler(event)"/>
+			</s:HGroup>
+		</mx:VBox>
+	</s:BorderContainer>
+	<s:BorderContainer visible="{updateProgress.visible}"
+					   borderVisible="false" backgroundAlpha="0"
+					   top="10" bottom="10" left="10" right="10">
+		<s:layout>
+			<s:VerticalLayout verticalAlign="middle" horizontalAlign="center"/>
+		</s:layout>
+		<mx:ProgressBar id="updateProgress" label="更新进度" visible="false"
+						top="10" bottom="10" left="10" right="10"/>
+	</s:BorderContainer>
+    <!-- 操作进度条 -->
+	<s:BorderContainer id="loadMaskLayer" visible="false" 
+					   borderVisible="false" backgroundAlpha="0" backgroundColor="#333333"
+					   top="10" bottom="10" left="10" right="10" z="1">
+		<s:layout>
+			<s:VerticalLayout verticalAlign="middle" horizontalAlign="center"/>
+		</s:layout>
+		<mx:VBox paddingLeft="10" paddingRight="10" height="100"
+				 paddingTop="10" paddingBottom="10" styleName="box">
+			<mx:ProgressBar id="opProgress" label="Loading..." 
+							top="50" bottom="50" left="20" right="20"
+							click="opProgress_clickHandler(event)"/>
+		</mx:VBox>
+	</s:BorderContainer>
+					   
+	<!--mx:VRule x="420" y="0" height="100%"/-->
+</s:WindowedApplication>

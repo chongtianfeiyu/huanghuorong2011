@@ -36,6 +36,11 @@ ns|ToolTip {
 	font-family:宋体;
 }
 
+s|Label {
+	fontSize:12;
+	font-family:宋体;
+}
+
 .alertTitle {
 	fontSize:12;
 	font-family:宋体;
@@ -72,7 +77,7 @@ ns|ToolTip {
 #loginBtn {
 	color:#333333;
 }
-
+/*
 #mainList {
 	borderStyle:none;
 	contentBackgroundColor:#333333;
@@ -82,7 +87,7 @@ ns|ToolTip {
 	paddingLeft:5;
 	paddingRight:5;
 	paddingTop:5;
-}
+}*/
 
 #mainList s|Scroller {
 	horizontal-scroll-policy: off;
@@ -130,3 +135,20 @@ utils|Status {
 	/*shadowDistance: 2;
 	shadowDirection: left;*/
 } 
+
+.vScrollerBar {
+	trackSkin: ClassReference(null);
+	downArrowSkin: ClassReference(null);
+	upArrowSkin: ClassReference(null);
+	thumbSkin: ClassReference(null);
+}
+s|VScrollBar {
+	skinClass: ClassReference("com.sina.microblog.ui.components.skin.VScrollBarSkin");
+}
+
+.VScrollBar {
+	downArrowSkin:		ClassReference(null);
+	upArrowSkin:		ClassReference(null);
+	thumbSkin:Embed(source="assets/img/vScrollBarThumb.png",scaleGridLeft="2",scaleGridTop="5",scaleGridRight="12",scaleGridBottom="12"); 
+	trackSkin:Embed(source="assets/img/vScrollBarTrack.png",scaleGridLeft="2",scaleGridTop="5",scaleGridRight="12",scaleGridBottom="12");  
+}

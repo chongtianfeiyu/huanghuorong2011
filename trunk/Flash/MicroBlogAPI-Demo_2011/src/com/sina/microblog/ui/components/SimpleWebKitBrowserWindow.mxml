@@ -3,16 +3,18 @@
 	xmlns:s="library://ns.adobe.com/flex/spark"
 	xmlns:mx="library://ns.adobe.com/flex/mx"
 	xmlns:fx="http://ns.adobe.com/mxml/2009"
-	type="{NativeWindowType.UTILITY}"
 	title="创意AIR微博-浏览器(1分钟后自动关闭本窗口)"
 	width="800"
-	height="600">
-		
+	height="600"
+	systemChrome="none"
+	transparent="true"
+	skinClass="com.sina.microblog.ui.components.skin.WindowSkin">
+	<fx:Style source="style.css"/>
 	<fx:Script>
 		<![CDATA[
 			import flash.events.HTMLUncaughtScriptExceptionEvent;
 			import flash.utils.setTimeout;
-			
+//			type="{NativeWindowType.UTILITY}"
 			import mx.events.FlexEvent;
 			
 			public var url:String = 'http://hambao.net/blog/';
@@ -30,16 +32,16 @@
 				if(url){
 					htmlBrowser.location = url;
 				}
-				setTimeout(function():void{
-					close();
-				}, 60*1000);
+//				setTimeout(function():void{
+//					close();
+//				}, 60*1000);
 			}
 			
 			private function configListener():void
 			{
 				htmlBrowser.addEventListener(Event.LOCATION_CHANGE, __onHtmlLocation);
 				htmlBrowser.addEventListener(Event.COMPLETE, function(e:Event):void{
-					title="新浪微博授权-创意AIR微博-浏览器(1分钟后自动关闭本窗口)"
+					title="新浪微博授权-创意AIR浏览器-(基于Webkit内核)"
 				});
 				htmlBrowser.htmlLoader.addEventListener(HTMLUncaughtScriptExceptionEvent.UNCAUGHT_SCRIPT_EXCEPTION, __onScriptError);
 				goRun.addEventListener(MouseEvent.CLICK, __onGoSurf);
@@ -84,9 +86,15 @@
 
 		]]>
 	</fx:Script>
-	<mx:HTML x="0" y="40" width="100%" height="92%" id="htmlBrowser" htmlText="&lt;h1&gt;Simple WebKit Browser&lt;/h1&gt;&lt;p&gt;Hello! This is an example browser for WebKit, just type some link to surf&lt;/p&gt;&lt;br/&gt;&lt;p&gt;Or visit these websites:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;&lt;a href=&quot;http://www.google.com/&quot;&gt;Google&lt;/a&gt;&lt;/li&gt;&lt;br/&gt;&lt;li&gt;&lt;a href=&quot;http://www.yahoo.com/&quot;&gt;Yahoo&lt;/a&gt;&lt;/li&gt;&lt;br/&gt;&lt;li&gt;&lt;a href=&quot;http://www.baidu.com/&quot;&gt;百度&lt;/a&gt;&lt;/li&gt;&lt;br/&gt;&lt;li&gt;&lt;a href=&quot;http://www.sina.com.cn/&quot;&gt;新浪&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;"/>
-	<mx:TextInput x="0" y="5" height="30" width="75%" text="http://" id="urlInputer" enter="__onGoSurf(null)"/>
-	<mx:Button y="20" label="Stop" right="72" width="70" id="stopLoad" height="20"/>
-	<mx:Button y="0" label="Back" right="72" width="70" id="historyBack" height="20"/>
-	<mx:Button y="10" label="Go" right="146" width="50" id="goRun"/>
+	<s:VGroup width="{width-10}" height="{height-10}" left="10" right="10" top="10" bottom="10">
+		<s:HGroup width="100%" height="30" verticalAlign="middle">
+			<mx:TextInput height="30" width="100%" text="http://hambao.net" id="urlInputer" enter="__onGoSurf(null)"/>
+			<mx:Button label="Stop" width="50" id="stopLoad" height="20"/>
+			<mx:Button label="Back" width="50" id="historyBack" height="20"/>
+			<mx:Button label="Go"  width="50" id="goRun" height="20"/>
+		</s:HGroup>
+		<mx:HTML width="100%" height="100%" id="htmlBrowser" 
+				 verticalScrollBarStyleName="VScrollBar"
+				 htmlText=""/>
+	</s:VGroup>
 </s:Window>
