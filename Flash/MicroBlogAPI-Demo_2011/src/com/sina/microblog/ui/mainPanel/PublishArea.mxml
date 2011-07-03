@@ -27,7 +27,7 @@
 			private function openFileDialog():void
 			{
 				var fileToOpen:File = new File();
-				fileToOpen.browseForOpen("请选择要插入的图片", [new FileFilter("Images( jpg )","*.jpg;*.jpeg;")]);
+				fileToOpen.browseForOpen("请选择要插入的图片", [new FileFilter("Images( jpg,bmp,gif,png )","*.bmp;*.gif;*.jpg;*.jpeg;*.png;")]);
 				fileToOpen.addEventListener(Event.SELECT, onImageSelected);
 			}
 			

@@ -4,7 +4,7 @@
 	xmlns:utils="com.sina.microblog.ui.utils.*"
 	xmlns:comps="com.sina.microblog.ui.components.*"
 	creationComplete="onCreationComplete()" 
-	borderVisible="true"
+	borderVisible="false"
 	borderColor="#FFFFFF"
 	borderStyle="solid"
 	verticalScrollPolicy="off"
@@ -260,11 +260,16 @@
 			}
 		]]>
 	</mx:Script>
-	<mx:VBox id="container" width="100%" y="{navigator.y + navigator.height}" height="{this.height - container.y}" verticalGap="1">
+	<mx:VBox id="container" width="100%" y="{navigator.y + navigator.height}" 
+			 height="{this.height - container.y}" verticalGap="1"
+			 verticalScrollBarStyleName="vScrollerBar"
+			 borderVisible="false">
 		<mainPanel:TitleBar controller="{_controller}"/>
 		<mainPanel:ProfileArea id="profileArea" controller="{_controller}" shownUser="{_controller.mainData.shownUser}"/>
 		<mx:HRule width="100%"/>
-		<mx:TabNavigator id="TabNav" width="100%" height="100%" backgroundAlpha="0">
+		<mx:TabNavigator id="TabNav" width="100%" height="100%" 
+						 backgroundAlpha="0"
+						 borderVisible="false">
 			<mx:VBox id="tab_status" label = '我的首页' show="tab_status_clickHandler(event)">
 				<comps:SupperList id="mainList" width="100%" height="100%"/>
 			</mx:VBox>
@@ -289,6 +294,7 @@
 			<mainPanel:PublishArea id="publishArea" controller="{_controller}"/>
 		</s:VGroup>
 	</mx:VBox>
-	<mainPanel:Navigator id="navigator" width="100%" controller="{_controller}"/>
+	<mainPanel:Navigator id="navigator" width="100%" controller="{_controller}"
+						 borderVisible="false"/>
 	<mx:Canvas id="popupContainer" width="100%" height="100%" visible="false"/>
 </mx:Canvas>
