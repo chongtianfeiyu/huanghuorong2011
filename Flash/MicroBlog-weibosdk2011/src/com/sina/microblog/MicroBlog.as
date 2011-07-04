@@ -17,6 +17,7 @@ package com.sina.microblog
 	import com.sina.microblog.events.MicroBlogEvent;
 	import com.sina.microblog.utils.GUID;
 	import com.sina.microblog.utils.StringEncoders;
+	import com.sina.microblog.data.MicroBlogEmotions;
 	
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
@@ -901,6 +902,10 @@ package com.sina.microblog
 	 */
 	[Event(name="removeFromFavoritesError", type="com.sina.microblog.events.MicroBlogErrorEvent")]
 	
+	[Event(name="Load_Emotions_Result", type="com.sina.microblog.events.MicroBlogEvent")]	
+	
+	[Event(name="Load_Emotions_Error", type="com.sina.microblog.events.MicroBlogErrorEvent")]
+	
 	///**
 	 //*  当允许/不允许某用户通知成功时触发该事件.
 	 //*
@@ -1131,6 +1136,7 @@ package com.sina.microblog
 		private static const STATUS_UNREAD_REQUEST_URL:String = "/statuses/unread.xml";
 		private static const RESET_STATUS_COUNT_REQUEST_URL:String = "/statuses/reset_count.xml";
 		///emotions表情接口
+		private static const EMOTIONS_LIST_REQUEST_URL:String = "/emotions.xml?source=$appkey";
 		
 		private static const SHOW_STATUS_REQUEST_URL:String = "/statuses/show/$id.xml";
 		//页面跳转接口
@@ -1222,7 +1228,7 @@ package com.sina.microblog
 		
 		///设置当前应用是否所在新浪open api的白名单域，如果为true则接口会尝试直接访问api.t下的接口而不使用代理
 		private var _isTrustDomain:Boolean = false;
-		 
+		
 		/**
 		 * 默认使用代理，即请求"http://api.t.sina.com.cn/flash/proxy.jsp"，以便跨域请求api.t的接口
 		 * 在air运行环境下，或者useProxy = true的情况下，直接去访问api.t目录。
@@ -1240,6 +1246,7 @@ package com.sina.microblog
 		{
 			Security.loadPolicyFile("http://api.t.sina.com.cn/flash/crossdomain.xml");
 			if (Capabilities.playerType == "Desktop") _useProxy = false;
+			
 		}
 
 		/**
@@ -1497,6 +1504,23 @@ package com.sina.microblog
 			else executeRequest(uri, getMicroBlogRequest(API_BASE_URL + uri, params, URLRequestMethod.POST));
 		}
 
+		/**
+		 * 返回新浪微博官方所有表情、魔法表情的相关信息。包括短语、表情类型、表情分类，是否热门等。
+		 * 
+		 * source	string	申请应用时分配的AppKey，调用接口时候代表应用的唯一身份。（采用OAuth授权方式不需要此参数）
+		 * type	   	string, 默认为"face"	表情类别。"face":普通表情，"ani"：魔法表情，"cartoon"：动漫表情
+		 * language	string, 默认为"cnname"	语言类别，"cnname"简体，"twname"繁体
+		 */ 
+		public function loadEmotionsList(type:String="face", language:String='cnname'):void{
+			var url:String = EMOTIONS_LIST_REQUEST_URL.replace("$appkey", source);
+			addProcessor(url, processEmotionsArray, MicroBlogEvent.LOAD_EMOTIONS_RESULT, MicroBlogErrorEvent.LOAD_EMOTIONS_ERROR);
+			var params:Object = new Object();
+			params["_uri"] = url;
+			if(_useProxy) executeRequest(url, getMicroBlogRequest(PROXY_URL, params, URLRequestMethod.POST));
+			else executeRequest(url, getMicroBlogRequest(API_BASE_URL + url, params, URLRequestMethod.POST));
+			
+			
+		}
 		/**
 		 * 返回最新的20条公共微博。返回结果非完全实时，最长会缓存60秒
 
@@ -3021,6 +3045,18 @@ package com.sina.microblog
 			return rawData;
 		}
 
+		//表情
+		private function processEmotionsArray(emotions:XML):Array{
+			var microBlogEmotions:MicroBlogEmotions;
+			var emitionsArray:Array=[];
+			for each (var emotion:XML in emotions.status)
+			{
+				microBlogEmotions=new MicroBlogEmotions(emotion);
+				emitionsArray.push(microBlogEmotions);
+			}
+			return emitionsArray;
+		}
+		
 		private function processStatusArray(statuses:XML):Array
 		{
 			var microBlogStatus:MicroBlogStatus;

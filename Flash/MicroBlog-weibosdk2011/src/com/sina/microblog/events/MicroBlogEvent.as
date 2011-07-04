@@ -75,6 +75,9 @@ package com.sina.microblog.events
 		
 		public static const LOAD_PROVINCE_CITY_ID_LIST_RESULT:String = "loadProvinceCityIdListResult";
 		public static const OPEN_CUSTOME_BROWSER:String = "OpenCustomeBrowser";
+		
+		//表情
+		public static const LOAD_EMOTIONS_RESULT:String = "Load_Emotions_Result";
 		/**
 		 * 请求所返回后的结果。
 		 * 返回值的具体内容请参照MicroBlog类的文档。

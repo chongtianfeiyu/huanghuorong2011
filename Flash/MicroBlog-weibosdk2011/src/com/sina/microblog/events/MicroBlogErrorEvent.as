@@ -76,6 +76,9 @@ package com.sina.microblog.events
 		
 		public static const NET_WORK_ERROR:String = "networkError";
 		
+		//表情
+		public static const LOAD_EMOTIONS_ERROR:String = "Load_Emotions_Error";
+		
 		/**
 		 * 请求失败后返回的错误信息
 		 */ 
