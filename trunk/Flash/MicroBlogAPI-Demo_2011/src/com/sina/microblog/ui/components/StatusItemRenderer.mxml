@@ -81,10 +81,10 @@
 				profileImageSource = statusData.user.profileImageUrl;
 				text = statusData.text;
 				
-//				ricTxt.text = "";
-//				var markup:String = "<TextFlow xmlns='http://ns.adobe.com/textLayout/2008'><p>"+text+" <img source=\"http://img.t.sinajs.cn/t35/style/images/common/face/ext/normal/d8/sad.gif\"/> </p></TextFlow>";
-//				textFlow = TextConverter.importToFlow(markup, TextConverter.TEXT_LAYOUT_FORMAT);
-//				ricTxt.textFlow = textFlow;
+				ricTxt.text = "";
+				var markup:String = "<TextFlow xmlns='http://ns.adobe.com/textLayout/2008'><p>"+text+" <img source=\"http://img.t.sinajs.cn/t35/style/images/common/face/ext/normal/d8/sad.gif\"/> </p></TextFlow>";
+				textFlow = TextConverter.importToFlow(markup, TextConverter.TEXT_LAYOUT_FORMAT);
+				ricTxt.textFlow = textFlow;
 				if(statusData.thumbPicUrl)
 				{
 					ifMedia = true;
@@ -234,9 +234,10 @@
 		]]>
 	</fx:Script>
 	<mx:Canvas width="100%" cornerRadius="5" left="7" right="7" top="7" bottom="7" 
-			   backgroundColor="#FFFFFF">
+			   backgroundColor="#FFFFFF"
+			   verticalScrollPolicy="off" horizontalScrollPolicy="off">
 	<mx:HBox width="100%" cornerRadius="10" left="7" right="7" top="7" bottom="7"
-			 >
+			 verticalScrollPolicy="off" horizontalScrollPolicy="off">
 		<mx:Canvas width="50" height="50" > 
 			<mx:Image width="50" source="{profileImageSource}" mask="{maskCanvas}"/>
 			<mx:Canvas width="50" height="50" backgroundColor="#ff0000" 
@@ -244,17 +245,14 @@
 		</mx:Canvas> 
 		<mx:VBox width="100%" verticalGap="5">
 			<mx:Label width="100%" text="{userName}" fontSize="12" fontFamily="宋体"/>
-			<mx:Text id="status" width="100%" htmlText="{text}" 
-					 fontSize="12" fontFamily="宋体"/>
-			<!--s:RichEditableText id="ricTxt"
+			<!--mx:Text id="status" width="100%" htmlText="{text}" 
+					 fontSize="12" fontFamily="宋体"/-->
+			<s:RichEditableText id="ricTxt"
+								fontSize="12" fontFamily="宋体"
 								editable="true"
 								selectable="true"
-								width="310"
-								height="124"
-								paddingTop="5"
-								paddingLeft="5"
-								paddingBottom="5"
-								paddingRight="5"
+								width="{width}"
+								minHeight="50"
 								color="#000000"
 								lineBreak="toFit">
 				<s:textFlow>
@@ -266,7 +264,7 @@
 						</s:p>
 					</s:TextFlow>
 				</s:textFlow>
-			</s:RichEditableText-->
+			</s:RichEditableText>
 			<!--utils:MediaViewer id="mediaViewer" height="{ifMedia ? undefined : 0}" statusData="{ifMedia ? statusData : null}"/-->
 			<!-- 转发内容 -->
 			<mx:HBox width="100%" visible="{hasRelay}"

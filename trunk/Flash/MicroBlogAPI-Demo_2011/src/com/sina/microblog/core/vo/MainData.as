@@ -12,5 +12,6 @@ package com.sina.microblog.core.vo
 		public var shownUser:MicroBlogUser;
 		public var mainList:ArrayCollection = new ArrayCollection();
 		public var currentPos:String;
+		public var emotionsArray:Array = new Array();
 	}
 }

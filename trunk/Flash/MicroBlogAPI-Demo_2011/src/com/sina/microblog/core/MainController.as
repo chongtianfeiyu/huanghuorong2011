@@ -78,7 +78,10 @@ package com.sina.microblog.core
 			microBlogAPI.addEventListener(MicroBlogEvent.LOAD_MENSIONS_RESULT, 			onMensionsResult);
 			microBlogAPI.addEventListener(MicroBlogEvent.OPEN_CUSTOME_BROWSER, 			onOpenCustomeBrowser);
 		
-//			appUpdater = new ApplicationUpdaterUI();
+			//Emotions
+			microBlogAPI.addEventListener(MicroBlogEvent.LOAD_EMOTIONS_RESULT, 			onLoadEmotionsResult);
+			microBlogAPI.addEventListener(MicroBlogErrorEvent.LOAD_EMOTIONS_ERROR, 		onLoadEmotionsError);
+			//			appUpdater = new ApplicationUpdaterUI();
 //			appUpdater.configurationFile = File.applicationDirectory.resolvePath("update-config.xml"); 
 //			appUpdater.initialize();
 		}
@@ -208,6 +211,7 @@ package com.sina.microblog.core
 //CallBack
 		private function onVerifyResult(event:MicroBlogEvent):void
 		{
+			microBlogAPI.loadEmotionsList();//获取表情
 			_mainData.currentUser = event.result as MicroBlogUser;
 			_mainData.shownUser = _mainData.currentUser;
 			dispatchEvent(new ClientEvent(ClientEvent.LOGIN_SUCCESS));
@@ -334,6 +338,15 @@ package com.sina.microblog.core
 		private function onMensionsResult(event:MicroBlogEvent):void
 		{
 			mainData.mainList = new ArrayCollection(event.result as Array);
+		}
+		
+		//表情
+		private function onLoadEmotionsResult(e:MicroBlogEvent):void{
+			_mainData.emotionsArray = e.result as Array;
+		}
+		
+		private function onLoadEmotionsError(e:MicroBlogErrorEvent):void{
+			trace("load emotion error "+e.message);
 		}
 		
 		private function onOpenCustomeBrowser(event:MicroBlogEvent):void{
