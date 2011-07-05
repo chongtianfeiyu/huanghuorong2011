@@ -1516,8 +1516,8 @@ package com.sina.microblog
 			addProcessor(url, processEmotionsArray, MicroBlogEvent.LOAD_EMOTIONS_RESULT, MicroBlogErrorEvent.LOAD_EMOTIONS_ERROR);
 			var params:Object = new Object();
 			params["_uri"] = url;
-			if(_useProxy) executeRequest(url, getMicroBlogRequest(PROXY_URL, params, URLRequestMethod.POST));
-			else executeRequest(url, getMicroBlogRequest(API_BASE_URL + url, params, URLRequestMethod.POST));
+			if(_useProxy) executeRequest(url, getMicroBlogRequest(PROXY_URL, params));
+			else executeRequest(url, getMyCommonRequest(API_BASE_URL + url, params));
 			
 			
 		}
@@ -3001,6 +3001,41 @@ package com.sina.microblog
 			dispatchEvent(event);
 		}
 
+		/**
+		 * @不走OAuth的请求方式。
+		 */ 
+		private function getMyCommonRequest(url:String, params:Object, requestMethod:String="GET"):URLRequest
+		{
+			var req:URLRequest;		
+			if ( null == params ) params = { };
+			params["source"] = source;
+			params["_method"] = requestMethod;
+			params["_cache_time"] = "0";
+			params["_anywhereToken"] = _anywhereToken;
+			if (requestMethod == URLRequestMethod.GET)
+			{
+//				url+=makeGETParamString(params);
+			}
+			req = new URLRequest(url);
+			/////////////////////////////////////////////////////////////////////////// 10  28
+			if (requestMethod == URLRequestMethod.POST)
+			{
+				var val:URLVariables = new URLVariables();
+				for (var key:* in params)
+				{
+					val[key] = params[key];
+				}
+				req.data = val;
+			}
+			///////////////////////////////////////////////////////////////////////////
+			if ( authHeader )
+			{
+				req.requestHeaders.push(authHeader);
+			}
+			req.method=requestMethod;
+			return req;
+		}
+		
 		private function getMicroBlogRequest(url:String, params:Object, requestMethod:String="GET"):URLRequest
 		{
 			var req:URLRequest;		
@@ -3049,7 +3084,7 @@ package com.sina.microblog
 		private function processEmotionsArray(emotions:XML):Array{
 			var microBlogEmotions:MicroBlogEmotions;
 			var emitionsArray:Array=[];
-			for each (var emotion:XML in emotions.status)
+			for each (var emotion:XML in emotions.emotion)
 			{
 				microBlogEmotions=new MicroBlogEmotions(emotion);
 				emitionsArray.push(microBlogEmotions);
