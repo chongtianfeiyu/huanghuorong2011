@@ -23,6 +23,7 @@ package com.sina.microblog.core
 		public var appUpdater:ApplicationUpdaterUI;
 		public var microBlogAPI:MicroBlog = new MicroBlog();
 		private var _mainData:MainData = new MainData();
+		public var emos_reg:RegExp = new RegExp("\\[(.+?)\\]", "gi");
 		public function MainController()
 		{
 //			microBlogAPI.addEventListener(MicroBlogErrorEvent.LOAD_FRIENDS_INFO_ERROR, onErrorHandler);
@@ -211,7 +212,6 @@ package com.sina.microblog.core
 //CallBack
 		private function onVerifyResult(event:MicroBlogEvent):void
 		{
-			microBlogAPI.loadEmotionsList();//获取表情
 			_mainData.currentUser = event.result as MicroBlogUser;
 			_mainData.shownUser = _mainData.currentUser;
 			dispatchEvent(new ClientEvent(ClientEvent.LOGIN_SUCCESS));

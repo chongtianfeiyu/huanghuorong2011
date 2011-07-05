@@ -58,6 +58,8 @@
 				controller.microBlogAPI.consumerKey = "2672661507";
 				controller.microBlogAPI.consumerSecret = "06a87478df02527aa6ddc94a0da843d9";
 				
+				controller.microBlogAPI.loadEmotionsList();//获取表情
+				
 				controller.microBlogAPI.useCustomeBrowser = true;
 				controller.addEventListener(ClientEvent.LOGIN_SUCCESS, onLoginSuccess);
 				controller.addEventListener(ClientEvent.LOGIN_FAILED, onJumpToLogin);

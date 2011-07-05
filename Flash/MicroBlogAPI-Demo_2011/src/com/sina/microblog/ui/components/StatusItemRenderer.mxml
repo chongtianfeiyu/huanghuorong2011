@@ -13,6 +13,7 @@
 			import com.sina.microblog.core.ClientEvent;
 			import com.sina.microblog.core.MainController;
 			import com.sina.microblog.core.utils.Utility;
+			import com.sina.microblog.data.MicroBlogEmotions;
 			import com.sina.microblog.data.MicroBlogStatus;
 			import com.sina.microblog.ui.utils.Utils;
 			
@@ -82,7 +83,32 @@
 				text = statusData.text;
 				
 				ricTxt.text = "";
-				var markup:String = "<TextFlow xmlns='http://ns.adobe.com/textLayout/2008'><p>"+text+" <img source=\"http://img.t.sinajs.cn/t35/style/images/common/face/ext/normal/d8/sad.gif\"/> </p></TextFlow>";
+				//<img source=\"http://img.t.sinajs.cn/t35/style/images/common/face/ext/normal/d8/sad.gif\"/>" 
+				var emoArr:Array = _controller.mainData.emotionsArray;
+				if(emoArr!=null && emoArr.length>0){
+					var emoName:String = "";
+					do{
+						if(emoName && emoName.length>0){
+							for (var i:int = 0; i<emoArr.length; i++){
+								var mbe:MicroBlogEmotions = emoArr[i] as MicroBlogEmotions;
+								if(emoName==mbe.phrase){
+									var url:String = mbe.url;
+									text = text.replace(emoName, " <img source=\""+url+"\"/> ");
+									break;
+								}
+							}
+						}
+						//搜索字符串中的表情，由addEmo进行替换。
+						var emoNameArr:Array = _controller.emos_reg.exec(text);
+						if(emoNameArr!=null && emoNameArr.length>0){
+							emoName = emoNameArr[0];
+						}else{
+							emoName = "";
+						}
+					}while (emoName)
+				}
+				var markup:String = "<TextFlow xmlns='http://ns.adobe.com/textLayout/2008'><p>" + text + " </p></TextFlow>";
+				trace("markup: " +markup);
 				textFlow = TextConverter.importToFlow(markup, TextConverter.TEXT_LAYOUT_FORMAT);
 				ricTxt.textFlow = textFlow;
 				if(statusData.thumbPicUrl)
@@ -251,8 +277,8 @@
 								fontSize="12" fontFamily="宋体"
 								editable="true"
 								selectable="true"
-								width="{width}"
-								minHeight="50"
+								width="{width-100}"
+								minHeight="20"
 								color="#000000"
 								lineBreak="toFit">
 				<s:textFlow>
