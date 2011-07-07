@@ -180,10 +180,10 @@ spark.skins.spark.FlexChromSkin.</p>
 	</s:Group>
 	
 	<!-- the border -->
-	<s:Rect left="0" right="0" top="0" bottom="0">
+	<!--s:Rect left="0" right="0" top="0" bottom="0">
 		<s:stroke>
 			<s:SolidColorStroke alpha.inactiveGroup="0.5" weight="1" color="0xA6A6A6" />
 		</s:stroke>
-	</s:Rect>
+	</s:Rect-->
 	
 </s:SparkSkin>

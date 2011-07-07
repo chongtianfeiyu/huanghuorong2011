@@ -14,6 +14,7 @@ package com.sina.microblog.core
 	import flash.events.EventDispatcher;
 	import flash.events.SecurityErrorEvent;
 	import flash.filesystem.File;
+	import flash.system.System;
 	import flash.utils.ByteArray;
 	
 	import mx.collections.ArrayCollection;
@@ -104,6 +105,7 @@ package com.sina.microblog.core
 		public function loadFriendsTimeline():void
 		{
 			microBlogAPI.loadFriendsTimeline();
+			GC();
 		}
 		public function publishStatus(text:String, image:ByteArray, imageName:String):void
 		{
@@ -364,6 +366,10 @@ package com.sina.microblog.core
 		public function set mainData(value:MainData):void
 		{
 			_mainData = value;
+		}
+		
+		public function GC():void{
+			System.gc();
 		}
 	}
 }

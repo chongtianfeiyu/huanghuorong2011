@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="0"
 	xmlns:utils="com.sina.microblog.ui.utils.*"
-	horizontalScrollPolicy="off" verticalScrollPolicy="off" fontFamily="宋体" fontSize="12">
+	xmlns:comps="com.sina.microblog.ui.components.*"
+	horizontalScrollPolicy="off" verticalScrollPolicy="off" fontFamily="宋体" fontSize="12"
+	creationComplete="canvas1_creationCompleteHandler(event)">
 	<mx:Script>
 		<![CDATA[
+			import com.sina.microblog.core.EmotionsEvent;
 			import com.sina.microblog.core.MainController;
+			import com.sina.microblog.data.MicroBlogEmotions;
+			import com.sina.microblog.ui.components.EmotionItemRenderer;
+			import com.sina.microblog.ui.components.EmotionsPanel;
+			import com.sina.microblog.ui.utils.ClipboardUtils;
 			
 			import flash.events.Event;
 			import flash.net.FileFilter;
 			import flash.utils.ByteArray;
+			
+			import mx.events.FlexEvent;
+			import mx.formatters.DateFormatter;
+			import mx.graphics.codec.PNGEncoder;
+			import mx.managers.PopUpManager;
 			
 			[Bindable]
 			private var _controller:MainController;
@@ -18,6 +30,7 @@
 			private var imageByteArray:ByteArray = new ByteArray();
 			[Bindable]
 			private var imageName:String;
+			private var emotionPanel:EmotionsPanel;
 			
 			private function setStatus():void
 			{
@@ -63,6 +76,74 @@
 				image.source = "";
 				ifImage = false;
 			}
+			
+			public function copyClipboardBmp():void{
+				var bitmap:Bitmap = ClipboardUtils.getInstance().getBitmap();
+				if(bitmap){
+					var encoder:PNGEncoder = new PNGEncoder();
+					imageByteArray = encoder.encode(bitmap.bitmapData);
+					var fmt:DateFormatter = new DateFormatter();
+					fmt.formatString = "YYYYMMDDJJNNSS";
+					imageName = fmt.format(new Date)+".png";
+					ifImage = true;
+					image.source = imageByteArray;
+					status.text = status.text + "#创意AIR截图分享#";
+				}
+				trace('');
+			}
+
+			protected function labelbutton1_clickHandler(event:MouseEvent):void
+			{
+				navigateToURL(new URLRequest("http://www.hambao.net/air/microblog/FscaptureV6.6.rar"), "_blank");
+			}
+			protected function emotionBtn_clickHandler(event:MouseEvent):void
+			{
+//				var __point:Point = emotionBtn.localToGlobal(new Point(emotionBtn.x, emotionBtn.y-166));
+				
+				emotionPanel.x =10;
+				emotionPanel.y =100;
+//				trace(__point);
+				PopUpManager.addPopUp(emotionPanel, this);						
+			}
+
+			protected function canvas1_creationCompleteHandler(event:FlexEvent):void
+			{
+				emotionPanel = new EmotionsPanel();
+				emotionPanel.addEventListener(EmotionItemRenderer.SELECT_EMOTION, selectEmotionHandler, true);
+				var emoArrayAll:Array = _controller.mainData.emotionsArray;
+				var emoArrayCom:Array = new Array();
+				if(emoArrayAll){
+					for(var i:int=0;i<emoArrayAll.length;i++){
+						var mbe:MicroBlogEmotions = emoArrayAll[i] as MicroBlogEmotions;
+						var category:String = mbe.category;
+						if(category==null || category.length==0){
+							emoArrayCom.push({phrase:mbe.phrase, url:mbe.url});
+						}
+					}
+				}
+				emotionPanel.emoArray = emoArrayCom;
+			}
+			private function selectEmotionHandler(evt:EmotionsEvent):void
+			{
+//				var __img:InlineGraphicElement = new InlineGraphicElement();
+//				__img.source = evt.info;
+//				//获取当前插入点所在的span，如果没有选择（即还没有激活过ti就直接发表情），就将选择设置为0
+//				var __anchor:int = ti.selectionAnchorPosition;
+//				__anchor = (__anchor == -1) ? 0 : __anchor;
+//				var __leaf:FlowLeafElement = input.findLeaf(__anchor);
+//				//trace('text:',__leaf.text);
+//				//trace('absolut index:', __leaf.getAbsoluteStart());
+//				//trace('findChildIndexAtPosition:', input.findChildIndexAtPosition(ti.selectionAnchorPosition));
+//				//拆分span，拆分必须使用span的相对索引，也就是说给的索引应该是被操作的span的插入点索引，而不是上级的p的插入点索引
+//				__leaf.splitAtPosition(__anchor - __leaf.getAbsoluteStart());
+//				//获取被拆分的span的子索引，并将表情图标插入到本child后方
+//				var __index:int = input.getChildIndex(__leaf);
+//				//trace('__index:', __index);
+//				input.addChildAt(__index+1, __img);
+//				trace(__img.status);
+				status.text += evt.info;
+			}
+
 		]]>
 	</mx:Script>
 	<mx:VBox width="100%" verticalGap="0">
@@ -79,6 +160,12 @@
 			<mx:Spacer width="100%"/>
 			<mx:Label text="{'还可以输入'+String(140-status.text.length)+'字'}" fontFamily="宋体" fontSize="12"/>
 <!--			<mx:Button label="发布" enabled="{status.text.length>0}" click="setStatus()"/>	-->
+			<comps:ImageButton id="emotionBtn" 
+							  skinClass="com.sina.microblog.ui.components.skin.ImgButtonSkin" 
+							  image="@Embed('assets/microblog/grin.png')"
+							  click="emotionBtn_clickHandler(event)"/>
+			<utils:LabelButton text="下载截图工具" click="labelbutton1_clickHandler(event)" toolTip="解压即可使用，热键为[PrtSc]"/>
+			<mx:Button label="粘贴截图" click="copyClipboardBmp()" color="#000000" fontFamily="宋体" fontSize="12" toolTip="将当前剪切板的图像作为附近上传(注意：是截图，不是文件)"/>
 			<mx:Button label="发布" click="setStatus()" color="#000000" fontFamily="宋体" fontSize="12"/>
 		</mx:HBox>
 	</mx:VBox>

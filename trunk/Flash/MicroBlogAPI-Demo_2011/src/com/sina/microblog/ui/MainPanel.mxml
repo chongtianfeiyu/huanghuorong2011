@@ -260,12 +260,17 @@
 			}
 		]]>
 	</mx:Script>
-	<mx:VBox id="container" width="100%" y="{navigator.y + navigator.height}" 
+	<mx:VBox id="container" width="100%" y="0" 
 			 height="{this.height - container.y}" verticalGap="1"
 			 verticalScrollBarStyleName="vScrollerBar"
-			 borderVisible="false">
+			 borderVisible="false"
+			 horizontalAlign="center">
+		<mx:Spacer height="10"/>
 		<mainPanel:TitleBar controller="{_controller}"/>
-		<mainPanel:ProfileArea id="profileArea" controller="{_controller}" shownUser="{_controller.mainData.shownUser}"/>
+		<mainPanel:ProfileArea id="profileArea" 
+							   controller="{_controller}" 
+							   shownUser="{_controller.mainData.shownUser}"
+							   width="{width-10}"/>
 		<mx:HRule width="100%"/>
 		<mx:TabNavigator id="TabNav" width="100%" height="100%" 
 						 backgroundAlpha="0"
@@ -288,13 +293,13 @@
 		</mx:TabNavigator>
 		
 		<mx:Spacer/>
-		<mx:HRule width="100%"/>
-		<s:VGroup width="100%" horizontalAlign="right">
+		<mx:HRule width="{width-10}"/>
+		<s:VGroup width="{width-10}" horizontalAlign="right">
 			<mx:Button id="expendBtn" label="展开发布区" color="#000000"/>
 			<mainPanel:PublishArea id="publishArea" controller="{_controller}"/>
 		</s:VGroup>
 	</mx:VBox>
-	<mainPanel:Navigator id="navigator" width="100%" controller="{_controller}"
-						 borderVisible="false"/>
+	<!--mainPanel:Navigator id="navigator" width="100%" controller="{_controller}"
+						 borderVisible="false"/-->
 	<mx:Canvas id="popupContainer" width="100%" height="100%" visible="false"/>
 </mx:Canvas>
