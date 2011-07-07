@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:ItemRenderer xmlns:fx="http://ns.adobe.com/mxml/2009" 
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				dataChange="itemrenderer1_dataChangeHandler(event)"
+	width="19" height="19">
+	<fx:Metadata>
+		[Event(name="selectEmotion", type="com.sina.microblog.core.EmotionsEvent")]
+	</fx:Metadata>
+	<fx:Script>
+		<![CDATA[
+			import com.sina.microblog.core.EmotionsEvent;
+			
+			import mx.events.FlexEvent;
+			
+			static public const SELECT_EMOTION:String = 'selectEmotion';
+			[Bindable]
+			private var url:String = '';
+			
+			protected function emotion_clickHandler(event:MouseEvent):void
+			{
+				this.dispatchEvent(new EmotionsEvent(SELECT_EMOTION, data.phrase));
+			}
+
+			protected function itemrenderer1_dataChangeHandler(event:FlexEvent):void
+			{
+				 url = data.url;
+			}
+
+		]]>
+	</fx:Script>
+
+	<s:states>
+        <s:State name="normal"/>            
+        <s:State name="hovered"/>
+        <s:State name="selected"/>
+    </s:states>
+    <s:Graphic id="emotion" click="emotion_clickHandler(event)">
+		<mx:Image id="img" source="{url}" >
+		</mx:Image>
+	</s:Graphic>
+</s:ItemRenderer>

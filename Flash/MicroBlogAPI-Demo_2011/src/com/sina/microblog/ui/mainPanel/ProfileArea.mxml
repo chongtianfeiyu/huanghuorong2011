@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%"
 	xmlns:utils="com.sina.microblog.ui.utils.*"
-	horizontalScrollPolicy="off"
-	fontFamily="simhei" fontSize="11">
+	horizontalScrollPolicy="off" 
+	fontFamily="宋体" 
+	color="#000000" fontSize="12" >
 	<mx:Script>
 		<![CDATA[
 			import com.sina.microblog.core.ClientEvent;
@@ -84,9 +85,15 @@
 			}
 		]]>
 	</mx:Script>
-	<mx:HBox width="100%">
-		<mx:Image width="50" height="50" source="{profileImageSource}" toolTip="点击上传头像"/>
-		<mx:VBox width="100%" verticalGap="1">
+	<mx:HBox width="{width}" horizontalAlign="center" 
+			 verticalScrollPolicy="off" horizontalScrollPolicy="off">
+		<mx:Canvas width="50" height="50" > 
+			<mx:Image width="50" height="50" source="{profileImageSource}" mask="{maskCanvas}"/>
+			<mx:Canvas width="50" height="50" backgroundColor="#ff0000" 
+					   id="maskCanvas"  cornerRadius="5" borderStyle="solid"/> 
+		</mx:Canvas> 
+		
+		<mx:VBox width="{width-50}" verticalGap="1">
 			<mx:HBox width="100%">
 				<mx:Label text="{screenName}" fontSize="13"/>
 				<mx:Label text="{location}"/>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 creationComplete="init()" 
+		 maxWidth="{width}"
+		 maxHeight="400"
+		 xmlns:comps="com.sina.microblog.ui.components.*" 
+		 xmlns:item="com.sina.microblog.ui.components.*">
+	<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
+		<s:fill>
+			<s:SolidColor color="#FFFF99"/>
+		</s:fill>
+		<s:filters>
+			<mx:DropShadowFilter distance="1"/>
+		</s:filters>
+	</s:Rect>
+	<s:DataGroup left="8" right="8" top="8" bottom="8" 
+		dataProvider="{emotions}">
+		<s:layout>
+			<s:TileLayout/>
+		</s:layout>
+		<s:itemRenderer>
+			<fx:Component>
+				<item:EmotionItemRenderer/>
+			</fx:Component>
+		</s:itemRenderer>
+	</s:DataGroup>
+	<fx:Script>
+		<![CDATA[
+			import com.sina.microblog.core.EmotionsEvent;
+			import com.sina.microblog.ui.components.EmotionItemRenderer;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexMouseEvent;
+			import mx.managers.PopUpManager;
+			
+			[Bindable]
+			private var emotions:ArrayCollection;
+			public var emoArray:Array;
+//			
+//			[Embed("assets/emotions/angel.png")] private var angel:Class;
+//			[Embed("assets/emotions/angry.png")] private var angry:Class;
+//			[Embed("assets/emotions/arrow.png")] private var arrow:Class;
+//			[Embed("assets/emotions/cheeky.png")] private var cheeky:Class;
+//			[Embed("assets/emotions/confused.png")] private var confused:Class;
+//			[Embed("assets/emotions/cool.png")] private var cool:Class;
+//			[Embed("assets/emotions/cry.png")] private var cry:Class;
+//			[Embed("assets/emotions/drool.png")] private var drool:Class;
+//			[Embed("assets/emotions/eek.png")] private var eek:Class;
+//			[Embed("assets/emotions/evil.png")] private var evil:Class;
+//			[Embed("assets/emotions/embarrassed.png")] private var embarrassed:Class;
+//			[Embed("assets/emotions/exclaim.png")] private var exclaim:Class;
+//			[Embed("assets/emotions/gangster.png")] private var gangster:Class;
+//			[Embed("assets/emotions/grin.png")] private var grin:Class;
+//			[Embed("assets/emotions/idea.png")] private var idea:Class;
+//			[Embed("assets/emotions/joy.png")] private var joy:Class;
+//			[Embed("assets/emotions/laugh.png")] private var laugh:Class;
+//			[Embed("assets/emotions/lips_sealed.png")] private var lips_sealed:Class;
+//			[Embed("assets/emotions/love.png")] private var love:Class;
+//			[Embed("assets/emotions/mad.png")] private var mad:Class;
+//			[Embed("assets/emotions/mr_green.png")] private var mr_green:Class;
+//			[Embed("assets/emotions/neutral.png")] private var neutral:Class;
+//			[Embed("assets/emotions/old_school.png")] private var old_school:Class;
+//			[Embed("assets/emotions/oops.png")] private var oops:Class;
+//			[Embed("assets/emotions/ouch.png")] private var ouch:Class;
+//			[Embed("assets/emotions/question.png")] private var question:Class;
+//			[Embed("assets/emotions/roll_eyes.png")] private var roll_eyes:Class;
+//			[Embed("assets/emotions/sad.png")] private var sad:Class;
+//			[Embed("assets/emotions/sleepy.png")] private var sleepy:Class;
+//			[Embed("assets/emotions/smile.png")] private var smile:Class;
+//			[Embed("assets/emotions/surprised.png")] private var surprised:Class;
+//			[Embed("assets/emotions/thumbs_up.png")] private var thumbs_up:Class;
+//			[Embed("assets/emotions/twisted.png")] private var twisted:Class;
+//			[Embed("assets/emotions/wink.png")] private var wink:Class;
+			
+			private function init():void
+			{
+//				var __arr:Array = [angel,angry,arrow,cheeky,confused,cool,cry,drool,eek,evil,embarrassed,exclaim,gangster,grin,idea,joy,laugh,lips_sealed,love,mad,mr_green,neutral,old_school,oops,ouch,question,roll_eyes,sad,sleepy,smile,surprised,thumbs_up,twisted,wink];
+				emotions = new ArrayCollection(emoArray);
+				
+				this.addEventListener(FlexMouseEvent.MOUSE_DOWN_OUTSIDE, mouseDownOutside);
+				this.addEventListener(EmotionItemRenderer.SELECT_EMOTION, selectEmotionHandler);		   
+			}
+			
+			private function mouseDownOutside(evt:FlexMouseEvent):void
+			{
+				PopUpManager.removePopUp(this);
+			}
+			
+			private function selectEmotionHandler(evt:EmotionsEvent):void
+			{
+				PopUpManager.removePopUp(this);
+			}
+		]]>
+	</fx:Script>
+</s:Group>

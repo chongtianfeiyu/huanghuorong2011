@@ -15,6 +15,7 @@
 			import com.sina.microblog.core.utils.Utility;
 			import com.sina.microblog.data.MicroBlogEmotions;
 			import com.sina.microblog.data.MicroBlogStatus;
+			import com.sina.microblog.ui.components.ext.TextFlowUtils;
 			import com.sina.microblog.ui.utils.Utils;
 			
 			import flash.net.URLRequest;
@@ -68,8 +69,6 @@
 			private var from:String;
 			private var originalPicUrl:String;
 			private var originalRelayPicUrl:String;
-			[Bindable]
-			private var textFlow:TextFlow;
 			
 			private function onDataChange():void
 			{
@@ -83,33 +82,7 @@
 				text = statusData.text;
 				
 				ricTxt.text = "";
-				//<img source=\"http://img.t.sinajs.cn/t35/style/images/common/face/ext/normal/d8/sad.gif\"/>" 
-				var emoArr:Array = _controller.mainData.emotionsArray;
-				if(emoArr!=null && emoArr.length>0){
-					var emoName:String = "";
-					do{
-						if(emoName && emoName.length>0){
-							for (var i:int = 0; i<emoArr.length; i++){
-								var mbe:MicroBlogEmotions = emoArr[i] as MicroBlogEmotions;
-								if(emoName==mbe.phrase){
-									var url:String = mbe.url;
-									text = text.replace(emoName, " <img source=\""+url+"\"/> ");
-									break;
-								}
-							}
-						}
-						//搜索字符串中的表情，由addEmo进行替换。
-						var emoNameArr:Array = _controller.emos_reg.exec(text);
-						if(emoNameArr!=null && emoNameArr.length>0){
-							emoName = emoNameArr[0];
-						}else{
-							emoName = "";
-						}
-					}while (emoName)
-				}
-				var markup:String = "<TextFlow xmlns='http://ns.adobe.com/textLayout/2008'><p>" + text + " </p></TextFlow>";
-				trace("markup: " +markup);
-				textFlow = TextConverter.importToFlow(markup, TextConverter.TEXT_LAYOUT_FORMAT);
+				var textFlow:TextFlow = TextFlowUtils.getTextFlow(text, _controller.mainData.emotionsArray, _controller.emos_reg);
 				ricTxt.textFlow = textFlow;
 				if(statusData.thumbPicUrl)
 				{
@@ -143,6 +116,10 @@
 					relayUserID=data.repost.user.id;
 					relayUserUrl="http://t.sina.com.cn/" + relayUserID;
 					relayStatusText="<a href='" + relayUserUrl + "' target='_blank'>" + relayUserScreenName + "</a>：" + Utils.getStatusHtmlText(data.repost.text);
+					ricRelayTxt.text = "";
+					var textFlow:TextFlow = TextFlowUtils.getTextFlow(relayStatusText, _controller.mainData.emotionsArray, _controller.emos_reg);
+					ricRelayTxt.textFlow = textFlow;
+					
 					hasRelayPic=(data.repost.thumbPicUrl == null || data.repost.thumbPicUrl == "") ? false : true;
 					if (hasRelayPic)
 					{
@@ -275,7 +252,7 @@
 					 fontSize="12" fontFamily="宋体"/-->
 			<s:RichEditableText id="ricTxt"
 								fontSize="12" fontFamily="宋体"
-								editable="true"
+								editable="false"
 								selectable="true"
 								width="{width-100}"
 								minHeight="20"
@@ -283,11 +260,7 @@
 								lineBreak="toFit">
 				<s:textFlow>
 					<s:TextFlow>
-						<s:p>This is a RichEditableText component of flex 4. It has feature of writing, editing text in multiple lines. It too have the hyperlinks, scrolling, selection properties.
-							At runtime of application you can edit and can format the paragraph also.
-							To visit: <s:a href="http://www.roseindia.net">Roseindia.net</s:a> hold CTRL key and then click.
-							<s:img source="http://img.t.sinajs.cn/t35/style/images/common/face/ext/normal/d8/sad.gif"/>
-						</s:p>
+						
 					</s:TextFlow>
 				</s:textFlow>
 			</s:RichEditableText>
@@ -298,8 +271,22 @@
 				<!--mx:Image width="50" source="{profileImageSource}"/-->
 				<mx:VBox width="100%" styleName="box" verticalGap="5">
 					<mx:Label width="100%" text="{relayUserScreenName}" fontSize="12" fontFamily="宋体"/>
-					<mx:Text width="100%" htmlText="{relayStatusText}" 
-							 fontSize="12" fontFamily="宋体"/>
+					<!--mx:Text width="100%" htmlText="{relayStatusText}" 
+							 fontSize="12" fontFamily="宋体"/-->
+					<s:RichEditableText id="ricRelayTxt"
+										fontSize="12" fontFamily="宋体"
+										editable="false"
+										selectable="true"
+										width="{width-100}"
+										minHeight="20"
+										color="#000000"
+										lineBreak="toFit">
+						<s:textFlow>
+							<s:TextFlow>
+								
+							</s:TextFlow>
+						</s:textFlow>
+					</s:RichEditableText>
 					<mx:Image id="thumbRelayPic" source="{relayThumbPicUrl}"
 							  visible="{hasRelayPic}"
 							  includeInLayout="{hasRelayPic}"
