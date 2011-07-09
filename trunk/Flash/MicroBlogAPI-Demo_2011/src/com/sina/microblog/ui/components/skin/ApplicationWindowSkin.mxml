@@ -209,6 +209,8 @@ spark.skins.spark.FlexChromSkin.</p>
 			</s:Rect-->
 			
 			<!-- status bar highlight -->
+			<!-- Comment by winters_huang 去掉状态栏边框-->
+			<!--
 			<s:Rect left="1" right="1" top="1" bottom="0" >
 				<s:stroke>
 					<s:LinearGradientStroke rotation="90" weight="1">
@@ -217,6 +219,7 @@ spark.skins.spark.FlexChromSkin.</p>
 					</s:LinearGradientStroke>
 				</s:stroke>
 			</s:Rect>
+			-->
 			
 			<!-- status text -->
 			<!--- @copy spark.components.WindowedApplication#statusText -->
