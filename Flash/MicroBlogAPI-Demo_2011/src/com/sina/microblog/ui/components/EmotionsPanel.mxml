@@ -3,10 +3,9 @@
 		 xmlns:s="library://ns.adobe.com/flex/spark"
 		 xmlns:mx="library://ns.adobe.com/flex/mx"
 		 creationComplete="init()" 
-		 maxWidth="{width}"
-		 maxHeight="400"
 		 xmlns:comps="com.sina.microblog.ui.components.*" 
 		 xmlns:item="com.sina.microblog.ui.components.*">
+	
 	<s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
 		<s:fill>
 			<s:SolidColor color="#FFFF99"/>
@@ -78,6 +77,7 @@
 			{
 //				var __arr:Array = [angel,angry,arrow,cheeky,confused,cool,cry,drool,eek,evil,embarrassed,exclaim,gangster,grin,idea,joy,laugh,lips_sealed,love,mad,mr_green,neutral,old_school,oops,ouch,question,roll_eyes,sad,sleepy,smile,surprised,thumbs_up,twisted,wink];
 				emotions = new ArrayCollection(emoArray);
+//				emotions = new ArrayCollection(__arr);
 				
 				this.addEventListener(FlexMouseEvent.MOUSE_DOWN_OUTSIDE, mouseDownOutside);
 				this.addEventListener(EmotionItemRenderer.SELECT_EMOTION, selectEmotionHandler);		   

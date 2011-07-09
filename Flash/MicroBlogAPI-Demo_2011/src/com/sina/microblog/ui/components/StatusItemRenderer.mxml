@@ -3,7 +3,8 @@
 		   xmlns:mx="library://ns.adobe.com/flex/mx"
 		   xmlns:fx="http://ns.adobe.com/mxml/2009" 
 		   width="100%"
-	xmlns:utils="com.sina.microblog.ui.utils.*"
+		   xmlns:utils="com.sina.microblog.ui.utils.*"
+		   xmlns:comps="com.sina.microblog.ui.components.*"
 	dataChange="onDataChange()" 
 	creationComplete="creationCompleteHandler(event)"
 	initialize="itemrenderer1_initializeHandler(event)"
@@ -11,6 +12,7 @@
 	<fx:Script>
 		<![CDATA[
 			import com.sina.microblog.core.ClientEvent;
+			import com.sina.microblog.core.EmotionsEvent;
 			import com.sina.microblog.core.MainController;
 			import com.sina.microblog.core.utils.Utility;
 			import com.sina.microblog.data.MicroBlogEmotions;
@@ -25,6 +27,7 @@
 			
 			import mx.core.FlexGlobals;
 			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
 			[Bindable]
 			private var _controller:MainController;
 			
@@ -69,6 +72,7 @@
 			private var from:String;
 			private var originalPicUrl:String;
 			private var originalRelayPicUrl:String;
+			private var emotionPanel:EmotionsPanel;
 			
 			private function onDataChange():void
 			{
@@ -220,6 +224,7 @@
 
 			protected function creationCompleteHandler(event:FlexEvent):void
 			{
+				creationCompleteHandler2(event);
 				_controller.addEventListener(ClientEvent.COMMENT_STATUS_SUCCESS, 		function(e:ClientEvent):void{
 					if(commentPanel.height != 0)
 					{
@@ -234,6 +239,38 @@
 				_controller = FlexGlobals.topLevelApplication.controller;
 			}
 
+			protected function emotionBtn_clickHandler(event:MouseEvent):void
+			{
+				var __point:Point = emotionBtn.localToGlobal(new Point(emotionBtn.x, emotionBtn.y-166));
+				
+				emotionPanel.x =20;
+				emotionPanel.y = __point.y+10;
+				trace(__point);
+				PopUpManager.addPopUp(emotionPanel, this);						
+			}
+			
+			protected function creationCompleteHandler2(event:FlexEvent):void
+			{
+				emotionPanel = new EmotionsPanel();
+				emotionPanel.addEventListener(EmotionItemRenderer.SELECT_EMOTION, selectEmotionHandler, true);
+				var emoArrayAll:Array = _controller.mainData.emotionsArray;
+				var emoArrayCom:Array = new Array();
+				if(emoArrayAll){
+					for(var i:int=0;i<emoArrayAll.length;i++){
+						var mbe:MicroBlogEmotions = emoArrayAll[i] as MicroBlogEmotions;
+						var category:String = mbe.category;
+						if(category==null || category.length==0){
+							emoArrayCom.push({phrase:mbe.phrase, url:mbe.url});
+						}
+					}
+				}
+				emotionPanel.emoArray = emoArrayCom;
+			}
+			private function selectEmotionHandler(evt:EmotionsEvent):void
+			{
+				comment.text += evt.info;
+			}
+			
 		]]>
 	</fx:Script>
 	<mx:Canvas width="100%" cornerRadius="5" left="7" right="7" top="7" bottom="7" 
@@ -320,8 +357,12 @@
 				<mx:VBox id="commentContainer" width="100%"/-->
 				<s:TextArea id="comment" width="100%" height="50" borderVisible="false"
 							 fontSize="12" fontFamily="宋体" />
-				<mx:HBox width="100%" horizontalGap="0">
+				<mx:HBox width="100%" horizontalGap="5">
 					<mx:Spacer width="100%"/>
+					<comps:ImageButton id="emotionBtn" 
+									   skinClass="com.sina.microblog.ui.components.skin.ImgButtonSkin" 
+									   image="@Embed('assets/microblog/grin.png')"
+									   click="emotionBtn_clickHandler(event)"/>
 					<mx:Button label="评论" click="publishComment()" fontSize="12" fontFamily="宋体"/>
 				</mx:HBox>	
 			</mx:VBox>

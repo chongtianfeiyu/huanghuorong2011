@@ -35,8 +35,9 @@
         <s:State name="hovered"/>
         <s:State name="selected"/>
     </s:states>
-    <s:Graphic id="emotion" click="emotion_clickHandler(event)">
-		<mx:Image id="img" source="{url}" >
+		<mx:Image id="img" source="{data.url}" 
+				  click="emotion_clickHandler(event)"
+				  buttonMode="true" toolTip="{data.phrase}">
 		</mx:Image>
-	</s:Graphic>
+
 </s:ItemRenderer>

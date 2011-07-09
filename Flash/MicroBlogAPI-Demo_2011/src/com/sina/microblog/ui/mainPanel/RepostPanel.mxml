@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%"
 		   fontFamily="宋体" fontSize="12" 
-	xmlns:utils="com.sina.microblog.ui.utils.*" 
-	backgroundColor="black" backgroundAlpha="0.5" 
+		   xmlns:utils="com.sina.microblog.ui.utils.*"
+		   xmlns:comps="com.sina.microblog.ui.components.*"
+		   backgroundColor="black" backgroundAlpha="0.5" 
+		   creationComplete="canvas1_creationCompleteHandler(event)"
 	>
 	<mx:Script>
 		<![CDATA[
 			import com.sina.microblog.core.ClientEvent;
+			import com.sina.microblog.core.EmotionsEvent;
 			import com.sina.microblog.core.MainController;
+			import com.sina.microblog.data.MicroBlogEmotions;
 			import com.sina.microblog.data.MicroBlogStatus;
+			import com.sina.microblog.ui.components.EmotionItemRenderer;
+			import com.sina.microblog.ui.components.EmotionsPanel;
+			
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
 			
 			private var _statusData:MicroBlogStatus;
 			
@@ -18,6 +27,7 @@
 			private var _originalStatusUserName:String;
 			[Bindable]
 			private var _text:String
+			private var emotionPanel:EmotionsPanel;
 			
 			private function repost():void
 			{
@@ -49,6 +59,37 @@
 			{
 				_controller = value;
 			}
+			protected function emotionBtn_clickHandler(event:MouseEvent):void
+			{
+				var __point:Point = emotionBtn.localToGlobal(new Point(emotionBtn.x, emotionBtn.y-166));
+				
+				emotionPanel.x =20;
+				emotionPanel.y = __point.y+10;
+				trace(__point);
+				PopUpManager.addPopUp(emotionPanel, this);						
+			}
+			
+			protected function canvas1_creationCompleteHandler(event:FlexEvent):void
+			{
+				emotionPanel = new EmotionsPanel();
+				emotionPanel.addEventListener(EmotionItemRenderer.SELECT_EMOTION, selectEmotionHandler, true);
+				var emoArrayAll:Array = _controller.mainData.emotionsArray;
+				var emoArrayCom:Array = new Array();
+				if(emoArrayAll){
+					for(var i:int=0;i<emoArrayAll.length;i++){
+						var mbe:MicroBlogEmotions = emoArrayAll[i] as MicroBlogEmotions;
+						var category:String = mbe.category;
+						if(category==null || category.length==0){
+							emoArrayCom.push({phrase:mbe.phrase, url:mbe.url});
+						}
+					}
+				}
+				emotionPanel.emoArray = emoArrayCom;
+			}
+			private function selectEmotionHandler(evt:EmotionsEvent):void
+			{
+				content.text += evt.info;
+			}
 		]]>
 	</mx:Script>
 	<mx:VBox width="100%" verticalAlign="middle" styleName="box"
@@ -63,6 +104,10 @@
 		<mx:HBox width="100%">
 			<mx:Label text="{'还可以输入'+String(140-content.text.length)+'字'}"/>
 			<mx:Spacer width="100%"/>
+			<comps:ImageButton id="emotionBtn" 
+							   skinClass="com.sina.microblog.ui.components.skin.ImgButtonSkin" 
+							   image="@Embed('assets/microblog/grin.png')"
+							   click="emotionBtn_clickHandler(event)"/>
 			<mx:Button label="转发" click="repost()"  enabled="{content.text.length>0}"/>
 			<mx:Button label="取消" click="cancel()"/>
 		</mx:HBox>

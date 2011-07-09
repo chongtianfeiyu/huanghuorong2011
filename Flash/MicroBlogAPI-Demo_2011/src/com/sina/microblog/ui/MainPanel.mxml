@@ -258,6 +258,11 @@
 			{
 				jumpToFriendsPage(null);
 			}
+			
+			protected function labelbutton1_clickHandler(event:MouseEvent):void
+			{
+				navigateToURL(new URLRequest("http://www.hambao.net/air/microblog/FscaptureV6.6.rar"), "_blank");
+			}
 		]]>
 	</mx:Script>
 	<mx:VBox id="container" width="100%" y="0" 
@@ -295,7 +300,10 @@
 		<mx:Spacer/>
 		<mx:HRule width="{width-10}"/>
 		<s:VGroup width="{width-10}" horizontalAlign="right">
-			<mx:Button id="expendBtn" label="展开发布区" color="#000000"/>
+			<s:HGroup gap="5" verticalAlign="middle">
+				<utils:LabelButton text="下载截图工具" click="labelbutton1_clickHandler(event)" toolTip="解压即可使用，热键为[PrtSc]"/>
+				<mx:Button id="expendBtn" label="展开发布区" color="#000000"/>
+			</s:HGroup>
 			<mainPanel:PublishArea id="publishArea" controller="{_controller}"/>
 		</s:VGroup>
 	</mx:VBox>
