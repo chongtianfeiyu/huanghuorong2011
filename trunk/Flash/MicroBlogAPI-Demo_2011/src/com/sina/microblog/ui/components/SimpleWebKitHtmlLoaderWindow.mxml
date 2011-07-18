@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Window creationComplete="init()"
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	title="新浪微博授权-创意AIR浏览器-(基于Webkit内核)"
+	width="800"
+	height="600"
+	systemChrome="none"
+	transparent="true"
+	skinClass="com.sina.microblog.ui.components.skin.WindowSkin">
+	<fx:Style source="style.css"/>
+	<fx:Script>
+		<![CDATA[
+			import com.sina.microblog.core.ClientEvent;
+			import com.sina.microblog.core.OAuthManager;
+			
+			import flash.events.HTMLUncaughtScriptExceptionEvent;
+			import flash.utils.setTimeout;
+			
+			import mx.events.FlexEvent;
+			private var htmlLoader:HTMLLoader;
+			
+			public var url:String = 'http://hambao.net/blog/';
+			private function init():void
+			{
+				var sWidtht:uint = Screen.mainScreen.visibleBounds.width;
+				var sHeight:uint = Screen.mainScreen.visibleBounds.height;
+				move(sWidtht/2-width/2, sHeight/2-height/2);
+				
+				htmlLoader = htmlBrowser.htmlLoader;
+				configListener();
+				//使用HtmlLoader
+				var urlReq:URLRequest = new URLRequest(url);
+				htmlLoader.addEventListener(Event.LOCATION_CHANGE, __onHtmlLocation);
+				htmlLoader.load(urlReq); 
+			}
+			
+			private function configListener():void
+			{
+				OAuthManager.instance.addEventListener(ClientEvent.CLOSE_CUSTOME_BROWSER, function(e:ClientEvent):void{
+					close();
+				});
+//				htmlBrowser.addEventListener(Event.LOCATION_CHANGE, __onHtmlLocation);
+//				htmlBrowser.addEventListener(Event.COMPLETE, function(e:Event):void{
+//					title="新浪微博授权-创意AIR浏览器-(基于Webkit内核)"
+//				});
+//				htmlBrowser.htmlLoader.addEventListener(HTMLUncaughtScriptExceptionEvent.UNCAUGHT_SCRIPT_EXCEPTION, __onScriptError);
+//				goRun.addEventListener(MouseEvent.CLICK, __onGoSurf);
+//				stopLoad.addEventListener(MouseEvent.CLICK, __onStopLoading);
+//				historyBack.addEventListener(MouseEvent.CLICK, __onHistoryBack);
+//				googleBtn.addEventListener(MouseEvent.CLICK, __onGoogleButton);
+			}
+
+			private function __onHtmlLocation(e:Event):void
+			{
+				urlInputer.text = htmlLoader.location;
+				OAuthManager.instance.onLoadAccess(htmlLoader.location);
+			}
+			
+			private function __onGoSurf(e:Event):void
+			{
+				if(urlInputer.text.toLowerCase().indexOf("://",0)<0){
+					urlInputer.text = "http://" + urlInputer.text;
+				}
+				htmlBrowser.location = urlInputer.text;
+			}
+			
+			private function __onStopLoading(e:Event):void
+			{
+				htmlBrowser.cancelLoad();
+			}
+			
+			private function __onHistoryBack(e:Event):void
+			{
+				htmlBrowser.historyBack();	
+			}
+			
+			private function __onGoogleButton(e:Event):void
+			{
+				htmlBrowser.location = "http://www.google.com/";
+			}
+			
+			private function __onScriptError(e:HTMLUncaughtScriptExceptionEvent):void
+			{
+				trace(e.exceptionValue);
+			}
+			
+
+		]]>
+	</fx:Script>
+	<s:VGroup width="{width-10}" height="{height-10}" left="10" right="10" top="10" bottom="10">
+		<s:HGroup width="100%" height="30" verticalAlign="middle">
+			<mx:TextInput height="30" width="100%" text="http://hambao.net" id="urlInputer" enter="__onGoSurf(null)"/>
+			<mx:Button label="Stop" width="50" id="stopLoad" height="20"/>
+			<mx:Button label="Back" width="50" id="historyBack" height="20"/>
+			<mx:Button label="Go"  width="50" id="goRun" height="20"/>
+		</s:HGroup>
+		<mx:HTML width="100%" height="100%" id="htmlBrowser" 
+				 verticalScrollBarStyleName="VScrollBar"
+				 htmlText=""/>
+	</s:VGroup>
+</s:Window>
