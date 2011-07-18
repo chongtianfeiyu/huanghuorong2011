@@ -1882,12 +1882,12 @@ package com.sina.microblog
 		public function resetCount(type:int):void
 		{
 			if (!(type == 1 || type == 2 || type == 3 || type == 4)) return;
-			addProcessor(RESET_STATUS_COUNT_REQUEST_URL, processBooleanResult, MicroBlogEvent.RESET_STATUS_COUNT_RESULT, MicroBlogErrorEvent.RESET_STATUS_COUNT_ERROR);
+			addProcessor(RESET_STATUS_COUNT_REQUEST_URL+"?type="+type, processBooleanResult, MicroBlogEvent.RESET_STATUS_COUNT_RESULT, MicroBlogErrorEvent.RESET_STATUS_COUNT_ERROR);
 			var params:URLVariables = new URLVariables();
 			params.type = type;
 			params["_uri"] = RESET_STATUS_COUNT_REQUEST_URL;
 			var req:URLRequest= (_useProxy) ? getMicroBlogRequest(PROXY_URL, params, URLRequestMethod.POST) : getMicroBlogRequest(API_BASE_URL + RESET_STATUS_COUNT_REQUEST_URL, params, URLRequestMethod.POST);
-			executeRequest(RESET_STATUS_COUNT_REQUEST_URL, req);	
+			executeRequest(RESET_STATUS_COUNT_REQUEST_URL+"?type="+type, req);	
 		}		
 		
 		/**
@@ -3046,10 +3046,10 @@ package com.sina.microblog
 			params["_anywhereToken"] = _anywhereToken;
 			if ( accessTokenKey.length > 0)
 			{
-				trace("accessTokenKey.length > 0 ....signRequest.......................");
+//				trace("accessTokenKey.length > 0 ....signRequest.......................");
 				req=signRequest(requestMethod, url, params, false);
 			}else{
-				trace("accessTokenKey.length < 0.......................");
+//				trace("accessTokenKey.length < 0.......................");
 				if (requestMethod == URLRequestMethod.GET)
 				{
 					url+=makeGETParamString(params);
