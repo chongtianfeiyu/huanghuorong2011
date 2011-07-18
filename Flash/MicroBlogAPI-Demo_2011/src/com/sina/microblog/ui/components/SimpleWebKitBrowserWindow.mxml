@@ -52,6 +52,7 @@
 
 			private function __onHtmlLocation(e:Event):void
 			{
+				trace("htmlBrowser.location = "+htmlBrowser.location);
 				urlInputer.text = htmlBrowser.location;
 			}
 			

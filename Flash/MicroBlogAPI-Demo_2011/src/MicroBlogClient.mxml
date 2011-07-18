@@ -45,6 +45,9 @@
 			private var dockImage:Bitmap = new dockImageClass();  
 			[Bindable]
 			public var controller:MainController = new MainController();
+			public var _consumerKey:String="2672661507";
+			public var _source:String = "2672661507";
+			public var _consumerSecret:String="06a87478df02527aa6ddc94a0da843d9";
 			private var statusBarMediator:StatusBarMediator = new StatusBarMediator();
 			
 			private var appUpdater:ApplicationUpdaterUI = new ApplicationUpdaterUI();
@@ -52,11 +55,12 @@
 			
 			override protected function initializationComplete():void
 			{
+				
 				super.initializationComplete();
 				controller.microBlogAPI.isTrustDomain = true;
-				controller.microBlogAPI.source = "2672661507";
-				controller.microBlogAPI.consumerKey = "2672661507";
-				controller.microBlogAPI.consumerSecret = "06a87478df02527aa6ddc94a0da843d9";
+				controller.microBlogAPI.source = _consumerKey;
+				controller.microBlogAPI.consumerKey = _source;
+				controller.microBlogAPI.consumerSecret = _consumerSecret;
 				
 				controller.microBlogAPI.loadEmotionsList();//获取表情
 				

@@ -68,6 +68,7 @@ package com.sina.microblog.core
 		public static const CANCEL_FAVORITE_FAILED	:String		= "removeFavoriteFailed";
 		
 		public static const OPEN_CUSTOME_BROWSER:String = "OpenCustomeBrowser";
+		public static const CLOSE_CUSTOME_BROWSER:String = "CloseCustomeBrowser";
 		
 		public static const LOAD_FRIENDS_TIMELINE_RESULT:String = "loadFriendsTimeLineResult";
 		public static const LOAD_COMMENTS_TIMELINE_RESULT:String = "loadCommentsTimelineResult";
@@ -75,6 +76,11 @@ package com.sina.microblog.core
 		
 		public static const LOAD_FRIENDS_INFO_RESULT:String = "loadFriendsInfoResult";
 		public static const LOAD_FOLLOWERS_INFO_RESULT:String = "loadFollowersInfoResult";
+		
+		public static const LOAD_STATUS_UNREAD_RESULT:String = "loadStatusUnreadResult";
+		public static const RESET_STATUS_COUNT_RESULT:String = "resetStatusResult";
+		public static const RESET_STATUS_COUNT_ERROR:String = "resetStatusError";
+		
 		public var data:Object;
 		public function ClientEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false)
 		{
