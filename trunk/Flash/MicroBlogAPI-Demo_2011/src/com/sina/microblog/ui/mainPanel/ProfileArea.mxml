@@ -101,7 +101,7 @@
 			<mx:HBox width="100%" horizontalGap="1">
 				<utils:LabelButton text="{'关注(' + String(friendsNum) + ')'}" 	click="jumpToFriends()"/>
 				<utils:LabelButton text="{'粉丝(' + String(fansNum) + ')'}"		click="jumpToFollowers()"/>
-				<utils:LabelButton text="{'微博(' + String(statussNum) + ')'}"	click="jumpToStatus()"/>
+				<utils:LabelButton text="{'微博(' + String(statussNum) + ')'}"	click="jumpToStatus()" enabled="false"/>
 				<mx:Spacer width="100%"/>
 			</mx:HBox>
 		</mx:VBox>

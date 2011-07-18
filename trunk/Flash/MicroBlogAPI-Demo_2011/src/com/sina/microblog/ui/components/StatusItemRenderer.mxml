@@ -40,6 +40,8 @@
 			[Bindable]
 			private var time:String;
 			[Bindable]
+			[Bindable]
+			private var time_relay:String;
 			private var statusSource:XML;
 			[Bindable]
 			private var ifMedia:Boolean;
@@ -70,6 +72,8 @@
 			private var thumbPicUrl:String;
 			[Bindable]
 			private var from:String;
+			[Bindable]
+			private var from_relay:String;
 			private var originalPicUrl:String;
 			private var originalRelayPicUrl:String;
 			private var emotionPanel:EmotionsPanel;
@@ -81,7 +85,7 @@
 					return;
 				}
 				commentPanelHeight = 0;
-				userName = statusData.user.screenName + ":"
+				userName = statusData.user.screenName + ""
 				profileImageSource = statusData.user.profileImageUrl;
 				text = statusData.text;
 				
@@ -97,7 +101,7 @@
 					ifMedia = false;
 				}
 //				statusSource = XML(statusData.source);
-				time = 	Utils.getDateString(statusData.createdAt);
+				time = 	Utils.formatDate(statusData.createdAt,"YYYY-MM-DD JJ:NN:SS"); 
 				ifOwner = (statusData.user.id ==_controller.mainData.currentUser.id);
 				ifFavorite = statusData.isFavorited;
 				/**
@@ -117,9 +121,10 @@
 				if (hasRelay)
 				{
 					relayUserScreenName=data.repost.user.screenName;
+					relayUserScreenName = "<a href='" + relayUserUrl + "' target='_blank'>" + "@"+relayUserScreenName + "</a>"; 
 					relayUserID=data.repost.user.id;
 					relayUserUrl="http://t.sina.com.cn/" + relayUserID;
-					relayStatusText="<a href='" + relayUserUrl + "' target='_blank'>" + relayUserScreenName + "</a>：" + Utils.getStatusHtmlText(data.repost.text);
+					relayStatusText=Utils.getStatusHtmlText(data.repost.text);
 					ricRelayTxt.text = "";
 					var textFlow:TextFlow = TextFlowUtils.getTextFlow(relayStatusText, _controller.mainData.emotionsArray, _controller.emos_reg);
 					ricRelayTxt.textFlow = textFlow;
@@ -130,7 +135,8 @@
 						relayThumbPicUrl=data.repost.thumbPicUrl;
 						originalRelayPicUrl = data.repost.originalPicUrl;
 					}
-//					isFavoriteRelay=data.repost.isFavorited;
+					time_relay = 	Utils.formatDate(data.repost.createdAt,"YYYY-MM-DD JJ:NN:SS");
+					from_relay = data.repost.source;
 				}
 			}
 			
@@ -284,9 +290,8 @@
 					   id="maskCanvas"  cornerRadius="5" borderStyle="solid"/> 
 		</mx:Canvas> 
 		<mx:VBox width="100%" verticalGap="5">
-			<mx:Label width="100%" text="{userName}" fontSize="12" fontFamily="宋体"/>
-			<!--mx:Text id="status" width="100%" htmlText="{text}" 
-					 fontSize="12" fontFamily="宋体"/-->
+			<mx:Label width="100%" text="{userName}" fontSize="12" fontFamily="宋体" color="#002AFF" fontWeight="bold"/>
+			<mx:Label text="{time}" fontSize="12" fontFamily="宋体"/>
 			<s:RichEditableText id="ricTxt"
 								fontSize="12" fontFamily="宋体"
 								editable="false"
@@ -307,9 +312,8 @@
 					 includeInLayout="{hasRelay}">
 				<!--mx:Image width="50" source="{profileImageSource}"/-->
 				<mx:VBox width="100%" styleName="box" verticalGap="5">
-					<mx:Label width="100%" text="{relayUserScreenName}" fontSize="12" fontFamily="宋体"/>
-					<!--mx:Text width="100%" htmlText="{relayStatusText}" 
-							 fontSize="12" fontFamily="宋体"/-->
+					<mx:Text width="100%" htmlText="{relayUserScreenName}" fontWeight="bold" 
+							  fontSize="12" fontFamily="宋体"  color="#002AFF"/>
 					<s:RichEditableText id="ricRelayTxt"
 										fontSize="12" fontFamily="宋体"
 										editable="false"
@@ -324,6 +328,15 @@
 							</s:TextFlow>
 						</s:textFlow>
 					</s:RichEditableText>
+					<mx:HBox width="100%" horizontalAlign="left">
+						<utils:LabelButton htmlText="{'来自：'+from_relay}" click="linkToSource()" fontSize="12" fontFamily="宋体"/>
+						<mx:Label text="{time_relay}" fontSize="12" fontFamily="宋体"/>
+						
+					</mx:HBox>
+					<mx:HBox width="100%" horizontalAlign="left">
+						<mx:Label id="retwitOri" text="原文转发(0)" width="{undefined}" fontSize="12" fontFamily="宋体"  color="#002AFF"/>
+						<mx:Label id="commentOri" text="原文评论(0)" width="{undefined}" fontSize="12" fontFamily="宋体" color="#002AFF"/>
+					</mx:HBox>
 					<mx:Image id="thumbRelayPic" source="{relayThumbPicUrl}"
 							  visible="{hasRelayPic}"
 							  includeInLayout="{hasRelayPic}"
@@ -342,14 +355,13 @@
 					  click="thumbPic_clickHandler(event)"
 					  buttonMode="true"/>
 			<mx:HBox width=" 100%" horizontalGap="0">
-				<mx:Label text="{time}" fontSize="12" fontFamily="宋体"/>
-				<utils:LabelButton htmlText="{'来自'+from}" click="linkToSource()" fontSize="12" fontFamily="宋体"/>
+				<utils:LabelButton htmlText="{'来自：'+from}" click="linkToSource()" fontSize="12" fontFamily="宋体"/>
 				<mx:Spacer width="100%"/>
 				<utils:LabelButton id="removeBtn" text="删除" width="{ifOwner?undefined:0}" click="remove()" fontSize="12" fontFamily="宋体"/>
-				<utils:LabelButton id="retwitBtn" text="转发" width="{undefined}" click="repost()" fontSize="12" fontFamily="宋体"/>
+				<utils:LabelButton id="retwitBtn" text="转发(0)" width="{undefined}" click="repost()" fontSize="12" fontFamily="宋体"/>
 				<utils:LabelButton id="favoriteBtn" text="收藏" width="{ifFavorite?0:undefined}" click="favorite()" fontSize="12" fontFamily="宋体"/>
 				<utils:LabelButton id="cancelFavoriteBtn" text="取消收藏" width="{ifFavorite?undefined:0}" click="cancelFavorite()"/>
-				<utils:LabelButton id="commentBtn" text="评论" fontSize="12" fontFamily="宋体" click="switchComment()"/>
+				<utils:LabelButton id="commentBtn" text="评论(0)" fontSize="12" fontFamily="宋体" click="switchComment()"/>
 			</mx:HBox>
 			<mx:VBox id="commentPanel" width="100%" 
 					 height="{commentPanelHeight}" styleName="box">

@@ -15,6 +15,7 @@
 			import com.sina.microblog.core.ClientEvent;
 			import com.sina.microblog.core.MainController;
 			import com.sina.microblog.data.MicroBlogStatus;
+			import com.sina.microblog.data.MicroBlogUnread;
 			import com.sina.microblog.data.MicroBlogUser;
 			import com.sina.microblog.ui.components.StatusItemRenderer;
 			import com.sina.microblog.ui.mainPanel.DirectMsgPanel;
@@ -40,6 +41,14 @@
 			private var directMsgPanel:DirectMsgPanel = new DirectMsgPanel();
 			[Bindable]
 			private var _controller:MainController;
+			[Bindable]
+			private var indexMsgCount:int;
+			[Bindable]
+			private var privateMsgCount:int;
+			[Bindable]
+			private var commentMsgCount:int;
+			[Bindable]
+			private var friendCount:int;
 			
 			override protected function initializationComplete():void
 			{
@@ -65,7 +74,7 @@
 			private function onCreationComplete():void
 			{
 				expendBtn.addEventListener(MouseEvent.CLICK, onExpendBtnClick);
-				jumpToHomePage(null);
+				jumpToHomePage();
 				_controller.addEventListener(ClientEvent.LOAD_FRIENDS_TIMELINE_RESULT , updateTimelineList);
 				_controller.addEventListener(ClientEvent.LOAD_COMMENTS_TIMELINE_RESULT, updateCommentList);
 				_controller.addEventListener(ClientEvent.LOAD_DIRECT_MESSAGES_RECEIVED_RESULT , updateDirectMsgList);
@@ -77,6 +86,7 @@
 						onExpendBtnClick(null);
 					}
 				});
+				_controller.addEventListener(ClientEvent.LOAD_STATUS_UNREAD_RESULT     , updateUnreadCount);
 			}
 			
 			private function onExpendBtnClick(event:MouseEvent):void
@@ -95,34 +105,27 @@
 				}
 			}
 			
-			private function jumpToHomePage(event:ClientEvent):void
+			private function jumpToHomePage():void
 			{
-				if(event!=null){
-					TabNav.selectedIndex = 0;
-					return;
-				}
+				TabNav.selectedIndex = 0;
 				_controller.mainData.currentPos = "首页";
 				_controller.loadFriendsTimeline();
+				resetCount(0);
 //				mainList.itemRenderer = StatusFactory;
 			}
-			private function jumpToFriendsPage(event:ClientEvent):void
+			private function jumpToFriendsPage():void
 			{
-				if(event!=null){
-					TabNav.selectedIndex = 3;
-					return;
-				}
+				TabNav.selectedIndex = 3;
 				_controller.mainData.currentPos = "关注列表";
 				_controller.loadUserFriends(_controller.mainData.currentUser);
 //				mainList.itemRenderer = FriendFactory;
 			}
-			private function jumpToFansPage(event:ClientEvent):void
+			private function jumpToFansPage():void
 			{
-				if(event!=null){
-					TabNav.selectedIndex = 4;
-					return;
-				}
+				TabNav.selectedIndex = 4;
 				_controller.mainData.currentPos = "粉丝列表";
 				_controller.loadUserFollowers(_controller.mainData.currentUser);
+				resetCount(4);
 //				mainList.itemRenderer = FollowerFactory;
 			}
 			private function jumpToStatusPage(event:ClientEvent):void
@@ -131,14 +134,12 @@
 				_controller.loadUserStatus(_controller.mainData.currentUser);
 //				mainList.itemRenderer = StatusFactory;
 			}
-			private function jumpToReceiveMsgsPage(event:ClientEvent):void
+			private function jumpToReceiveMsgsPage():void
 			{
-				if(event!=null){
-					TabNav.selectedIndex = 1;
-					return;
-				}
+				TabNav.selectedIndex = 1;
 				_controller.mainData.currentPos = "我收到的私信";
 				_controller.loadReceivedDirectMsg();
+				resetCount(3);
 //				mainList.itemRenderer = DirectMsgFactory;
 			}
 			private function jumpToSentMsgsPage(event:ClientEvent):void
@@ -147,14 +148,13 @@
 				_controller.loadSentDirectMsg();
 //				mainList.itemRenderer = DirectMsgFactory;
 			}
-			private function jumpToReceivedCommentsPage(event:ClientEvent):void
+			
+			private function jumpToReceivedCommentsPage():void
 			{
-				if(event!=null){
-					TabNav.selectedIndex = 2;
-					return;
-				}
+				TabNav.selectedIndex = 2;
 				_controller.mainData.currentPos = "我收到的评论";
 				_controller.loadCommentsTimeline();
+				resetCount(1);
 //				mainList.itemRenderer = CommentFactory;
 			}
 			private function jumpToSentCommentsPage(event:ClientEvent):void
@@ -175,6 +175,7 @@
 			{
 				_controller.mainData.currentPos = "@我的";
 				_controller.loadMentions();
+				resetCount(2);
 //				mainList.itemRenderer = StatusFactory;
 			}
 			
@@ -218,45 +219,37 @@
 				popupContainer.visible = false;
 			}
 			
+			private function updateUnreadCount(event:ClientEvent):void{
+				var unread:MicroBlogUnread = event.data as MicroBlogUnread;
+				indexMsgCount = unread.new_status;
+				privateMsgCount += unread.dm;
+				commentMsgCount += unread.comments;
+				friendCount += unread.followers;
+			}
+			
+			/**
+			 * @将页面的提示置零 1：评论数， 2：@数， 3：私信数，4：关注我的数
+			 */ 
+			private function resetCount(type:int):void{
+				if(type==0){
+					indexMsgCount = 0;
+				}else if(type==1){
+					commentMsgCount = 0;
+				}else if(type==2){
+					
+				}else if(type==3){
+					privateMsgCount = 0;
+				}else if(type==4){
+					friendCount = 0;
+				}
+			}
+			
 			public function set controller(value:MainController):void
 			{
 				_controller = value;
 				
 				repostPanel.controller = _controller;
 				directMsgPanel.controller = _controller;
-			}
-			
-//			import com.sina.microblog.ui.mainPanel.DirectMsgPanel;
-//			import com.sina.microblog.ui.mainPanel.RepostPanel;
-//			import com.sina.microblog.ui.utils.Comment;
-//			import com.sina.microblog.ui.utils.DirectMsg;
-//			import com.sina.microblog.ui.utils.Status;
-//			import com.sina.microblog.ui.utils.User;
-
-			protected function tab_status_clickHandler(event:FlexEvent):void
-			{
-				jumpToHomePage(null);
-			}
-
-			protected function tab_comment_clickHandler(event:FlexEvent):void
-			{
-				jumpToReceivedCommentsPage(null);
-			}
-
-
-			protected function tab_direct_showHandler(event:FlexEvent):void
-			{
-				jumpToReceiveMsgsPage(null);
-			}
-
-
-			protected function tab_follower_showHandler(event:FlexEvent):void
-			{
-				jumpToFansPage(null);
-			}
-			protected function tab_friend_showHandler(event:FlexEvent):void
-			{
-				jumpToFriendsPage(null);
 			}
 			
 			protected function labelbutton1_clickHandler(event:MouseEvent):void
@@ -277,25 +270,53 @@
 							   shownUser="{_controller.mainData.shownUser}"
 							   width="{width-10}"/>
 		<mx:HRule width="100%"/>
-		<mx:TabNavigator id="TabNav" width="100%" height="100%" 
-						 backgroundAlpha="0"
-						 borderVisible="false">
-			<mx:VBox id="tab_status" label = '我的首页' show="tab_status_clickHandler(event)">
-				<comps:SupperList id="mainList" width="100%" height="100%"/>
+		<mx:Canvas width="100%" height="100%">
+			<mx:VBox width="100%" height="100%">
+				<mx:Spacer width="100%" height="5"/>
+				<mx:TabNavigator id="TabNav" width="100%" height="100%" 
+								 backgroundAlpha="0"
+								 borderVisible="false">
+					<mx:VBox id="tab_status" label = '我的首页' show="jumpToHomePage()">
+						<comps:SupperList id="mainList" width="100%" height="100%"/>
+					</mx:VBox>
+					<mx:VBox id="tab_direct" label = '我的私信' show="jumpToReceiveMsgsPage()">
+						<comps:SupperListDirectMsg id="mainListDirect" width="100%" height="100%"/>
+					</mx:VBox>
+					<mx:VBox id="tab_comment" label = '我的评论' show="jumpToReceivedCommentsPage()">
+						<comps:SupperListComment id="mainListComment" width="100%" height="100%"/>
+					</mx:VBox> 
+					<mx:VBox id="tab_friend" label = '我关注的' show="jumpToFriendsPage()">
+						<comps:SupperListFriend id="mainListFriend" width="100%" height="100%"/>
+					</mx:VBox>
+					<mx:VBox id="tab_follower" label = '我的粉丝' show="jumpToFansPage()">
+						<comps:SupperListFollower id="mainListFollower" width="100%" height="100%"/>
+					</mx:VBox>  
+				</mx:TabNavigator>
 			</mx:VBox>
-			<mx:VBox id="tab_direct" label = '我的私信' show="tab_direct_showHandler(event)">
-				<comps:SupperListDirectMsg id="mainListDirect" width="100%" height="100%"/>
-			</mx:VBox>
-			<mx:VBox id="tab_comment" label = '我的评论' show="tab_comment_clickHandler(event)">
-				<comps:SupperListComment id="mainListComment" width="100%" height="100%"/>
-			</mx:VBox> 
-			<mx:VBox id="tab_follower" label = '我关注的' show="tab_follower_showHandler(event)">
-				<comps:SupperListFollower id="mainListFollower" width="100%" height="100%"/>
-			</mx:VBox> 
-			<mx:VBox id="tab_friend" label = '我的粉丝' show="tab_friend_showHandler(event)">
-				<comps:SupperListFriend id="mainListFriend" width="100%" height="100%"/>
-			</mx:VBox> 
-		</mx:TabNavigator>
+			<mx:HBox width="100%" height="40" verticalAlign="top" horizontalGap="0">
+				<mx:Spacer width="39"/>
+				<mx:Canvas width="26" height="18" visible="{indexMsgCount>0}">
+					<mx:Image width="26" height="18" source="@Embed('assets/microblog/msg.png')"/>
+					<mx:Label width="26" height="18" text="{indexMsgCount}" click="jumpToHomePage()" buttonMode="true" color="#FFFFFF" textAlign="center"/>
+				</mx:Canvas>
+				<mx:Spacer width="39"/>
+				<mx:Canvas width="26" height="18" visible="{privateMsgCount>0}">
+					<mx:Image width="26" height="18" source="@Embed('assets/microblog/msg.png')"/>
+					<mx:Label width="26" height="18" text="{privateMsgCount}" click="jumpToReceiveMsgsPage()" buttonMode="true" color="#FFFFFF" textAlign="center"/>
+				</mx:Canvas>
+				<mx:Spacer width="39"/>
+				<mx:Canvas width="26" height="18" visible="{commentMsgCount>0}">
+					<mx:Image width="26" height="18" source="@Embed('assets/microblog/msg.png')"/>
+					<mx:Label width="26" height="18" text="{commentMsgCount}" click="jumpToReceivedCommentsPage()" buttonMode="true" color="#FFFFFF" textAlign="center"/>
+				</mx:Canvas>
+				<mx:Spacer width="65"/>
+				<mx:Spacer width="39"/>
+				<mx:Canvas width="26" height="18" visible="{friendCount>0}">
+					<mx:Image width="26" height="18" source="@Embed('assets/microblog/msg.png')"/>
+					<mx:Label width="26" height="18" text="{friendCount}" click="jumpToFansPage()" buttonMode="true" color="#FFFFFF" textAlign="center"/>
+				</mx:Canvas>
+			</mx:HBox>
+		</mx:Canvas>
 		
 		<mx:Spacer/>
 		<mx:HRule width="{width-10}"/>

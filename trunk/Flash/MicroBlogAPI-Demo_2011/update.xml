@@ -1,6 +1,6 @@
 <!-- update.xml --> 
      <update xmlns="http://ns.adobe.com/air/framework/update/description/1.0"> 
-       <version>v1.0beta20110708</version> 
+       <version>v1.0beta20110710</version> 
        <url>http://hambao.net/air/microblog/MicroBlogClient.air</url> 
        <description> 
            <text xml:lang="en_US">Creative AIR MicroBlog Sina</text> 

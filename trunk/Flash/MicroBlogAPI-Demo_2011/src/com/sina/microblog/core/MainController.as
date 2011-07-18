@@ -16,8 +16,11 @@ package com.sina.microblog.core
 	import flash.filesystem.File;
 	import flash.system.System;
 	import flash.utils.ByteArray;
+	import flash.utils.setTimeout;
 	
 	import mx.collections.ArrayCollection;
+	
+	import spark.components.mediaClasses.VolumeBar;
 	
 	public class MainController extends EventDispatcher
 	{
@@ -79,7 +82,11 @@ package com.sina.microblog.core
 		//Mentions
 			microBlogAPI.addEventListener(MicroBlogEvent.LOAD_MENSIONS_RESULT, 			onMensionsResult);
 			microBlogAPI.addEventListener(MicroBlogEvent.OPEN_CUSTOME_BROWSER, 			onOpenCustomeBrowser);
-		
+		//未读消息
+			microBlogAPI.addEventListener(MicroBlogEvent.LOAD_STATUS_UNREAD_RESULT,     onLoadStatusUnreadResult);
+			microBlogAPI.addEventListener(MicroBlogEvent.RESET_STATUS_COUNT_RESULT,     onResetStatusResult);
+			microBlogAPI.addEventListener(MicroBlogErrorEvent.RESET_STATUS_COUNT_ERROR ,onResetStatusCountError);
+			
 			//Emotions
 			microBlogAPI.addEventListener(MicroBlogEvent.LOAD_EMOTIONS_RESULT, 			onLoadEmotionsResult);
 			microBlogAPI.addEventListener(MicroBlogErrorEvent.LOAD_EMOTIONS_ERROR, 		onLoadEmotionsError);
@@ -211,6 +218,18 @@ package com.sina.microblog.core
 			microBlogAPI.loadMentions();
 		}
 		
+		/**
+		 * @未读消息
+		 */
+		public function loadStatusUnread():void{
+			microBlogAPI.loadStatusUnread(1);
+		}
+		/**
+		 * @1：评论数， 2：@数， 3：私信数，4：关注我的数
+		 */ 
+		private function resetCount(type:int):void{
+			microBlogAPI.resetCount(type);
+		}
 //CallBack
 		private function onVerifyResult(event:MicroBlogEvent):void
 		{
@@ -229,6 +248,8 @@ package com.sina.microblog.core
 			mainData.mainList = new ArrayCollection(event.result as Array);
 			var e:ClientEvent = new ClientEvent(ClientEvent.LOAD_FRIENDS_TIMELINE_RESULT);
 			e.data = mainData.mainList;
+			//读取是否有新消息。
+			loadStatusUnread();
 			dispatchEvent(e);
 		}
 		private function onUpdateStatusResult(event:MicroBlogEvent):void
@@ -355,6 +376,35 @@ package com.sina.microblog.core
 			var e:ClientEvent = new ClientEvent(ClientEvent.OPEN_CUSTOME_BROWSER);
 			e.data = event.result;
 			dispatchEvent(e);
+		}
+		
+		//未读消息
+		private function onLoadStatusUnreadResult(event:MicroBlogEvent):void{
+			var e:ClientEvent = new ClientEvent(ClientEvent.LOAD_STATUS_UNREAD_RESULT);
+			e.data = event.result;
+			dispatchEvent(e);
+			resetCount(1);
+			//由于新浪有请求时间间隔限制，必须延时请求
+			setTimeout(function():void{resetCount(2);}, 0*1000);
+			setTimeout(function():void{resetCount(3);}, 0*1000);
+			setTimeout(function():void{resetCount(4);}, 0*1000);
+			onTimer();
+		}
+		
+		private function onResetStatusResult(event:MicroBlogEvent):void{
+//			trace(event.result);
+		}
+		private function onResetStatusCountError(event:MicroBlogErrorEvent):void{
+			trace(event.message);
+		}
+		/**
+		 * @定时器，每隔20秒种请求一次是否有新消息。
+		 * 
+		 */
+		private function onTimer():void{
+			setTimeout(function():void{
+				loadStatusUnread();
+			},20*1000);
 		}
 		
 		[Bindable]
